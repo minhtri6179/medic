@@ -15,7 +15,7 @@ class InvoiceService:
     def __init__(self) -> None:
         pass
 
-    def get_empty_invoice_with_patient_id(self, patient_id: int | str):
+    def get_empty_invoice_with_patient_id(self, patient_id: int or str):
         '''
             Get empty instance of invoice which is used for creating new invoice for a patient
         '''
@@ -24,7 +24,7 @@ class InvoiceService:
         except Patient.DoesNotExist:
             return None
 
-    def get_empty_invoice_and_details_from_prescription_id(self, prescription_id: int | str):
+    def get_empty_invoice_and_details_from_prescription_id(self, prescription_id: int or str):
         '''
             Get empty instance of invoice which is used for creating new invoice base on existing prescription
         '''
@@ -49,7 +49,7 @@ class InvoiceService:
             and all(num.isdigit() for num in medicine_quanties) \
             and all(is_float(num) for num in medicine_prices)
 
-    def create_invoice_and_detail(self, form: InvoiceCreateOrEditForm | Invoice, username, medicine_ids, medicine_quantities, medicine_prices):
+    def create_invoice_and_detail(self, form: InvoiceCreateOrEditForm or Invoice, username, medicine_ids, medicine_quantities, medicine_prices):
         if form.is_valid() and self.is_invoice_detail_valid(medicine_ids, medicine_quantities, medicine_prices):
             invoice = form.save(commit=False)
             invoice.created_by = User.objects.get(username=username)
@@ -70,7 +70,7 @@ class InvoiceService:
             return True
         return False
 
-    def edit_invoice_and_detail(self, form: InvoiceCreateOrEditForm | Invoice, medicine_ids, medicine_quantities, medicine_prices):
+    def edit_invoice_and_detail(self, form: InvoiceCreateOrEditForm or Invoice, medicine_ids, medicine_quantities, medicine_prices):
         if form.is_valid() and self.is_invoice_detail_valid(medicine_ids, medicine_quantities, medicine_prices):
             print(medicine_quantities)
             print(medicine_prices)

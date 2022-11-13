@@ -7,7 +7,7 @@ class PrescriptionService:
     def __init__(self) -> None:
         pass
 
-    def get_empty_prescription_with_patient_id(self, patient_id: int | str):
+    def get_empty_prescription_with_patient_id(self, patient_id: int or str):
         try:
             return Prescription(patient=Patient.objects.get(pk=patient_id))
         except Patient.DoesNotExist:
@@ -19,7 +19,7 @@ class PrescriptionService:
             and all(num.isdigit() for num in medicine_numbers) \
 
 
-    def create_prescription_and_detail(self, form: PrescriptionForm | Prescription, username, medicine_ids, medicine_numbers, medicine_usages):
+    def create_prescription_and_detail(self, form: PrescriptionForm or Prescription, username, medicine_ids, medicine_numbers, medicine_usages):
         if form.is_valid() and self.is_prescription_detail_valid(medicine_ids, medicine_numbers, medicine_usages):
             prescription = form.save(commit=False)
             prescription.created_by = User.objects.get(username=username)
@@ -33,7 +33,7 @@ class PrescriptionService:
             return True
         return False
 
-    def edit_prescription_and_detail(self, form: PrescriptionForm | Prescription,  medicine_ids, medicine_numbers, medicine_usages):
+    def edit_prescription_and_detail(self, form: PrescriptionForm or Prescription,  medicine_ids, medicine_numbers, medicine_usages):
         if form.is_valid() and self.is_prescription_detail_valid(medicine_ids, medicine_numbers, medicine_usages):
 
             prescription = form.save()

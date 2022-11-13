@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form action="{% url 'report:general' %}">
+        <select name="report" id="report-type">
+            <option value="general">Aggregate report</option>
+            <option value="revenue-chart">Revenue chart</option>
+            <option value="invoice-detail">Medicine revenue</option>
+            <option value="most-used-medicine">Most used medicine</option>
+        </select>
+        <select name="by" id="">
+            <option value="date">By date</option>
+            <option value="month">By month</option>
+            <option value="year">By year</option>
+        </select>
+        <input type="date" name="from">
+        <input type="date" name="to">
+        <input type="submit">
+    </form>
+    <table class="table">
+        <thead>
+            <th>Date</th>
+            <th>Number of prescription</th>
+            <th>Number of invoice</th>
+            <th>Invoice total</th>
+        </thead>
+        <tbody>
+            {% for aggr in data %}
+            <tr>
+                <td>{{aggr.created_at__date|date:'d/n/Y'}}</td>
+                <td>{{aggr.prescription_count}}</td>
+                <td>{{aggr.invoice_count}}</td>
+                <td>{{aggr.total}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

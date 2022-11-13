@@ -1,0 +1,80 @@
+<div class="sidebar-wrapper">
+  <div class="logo">
+    <a href="{% url 'home' %}" class="simple-text logo-normal">
+      <img
+        src="https://cache.clinic.co/assets/img/logo.png"
+        class="mx-auto d-block"
+        weight="100"
+        height="100"
+      />
+    </a>
+  </div>
+  <div class="logo text-center">
+    <a href="{% url 'home' %}" class="simple-text logo-normal"> HOME </a>
+  </div>
+  <ul class="nav">
+    {% url 'prescribing_management:doctor_index' as patient_url %}
+    <li class="{% if request.path == doctor_url %}active{% endif %}">
+      <a href="{% url 'prescribing_management:doctor_index' %}">
+        <i class="fa fa-calculator" aria-hidden="true"></i>
+        <h5>Doctor</h5>
+      </a>
+    </li>
+    {% url 'prescribing_management:patient_index' as patient_url %}
+    <li class="{% if request.path == patient_url %}active{% endif %}">
+      <a href="{% url 'prescribing_management:patient_index' %}">
+        <i class="tim-icons icon-atom"></i>
+        <h5>Patient</h5>
+      </a>
+    </li>
+    {% url 'prescribing_management:medicine_index' as medicine_url %}
+    <li class="{% if request.path == medicine_url %}active{% endif %}">
+      <a href="{% url 'prescribing_management:medicine_index' %}">
+        <i class="tim-icons icon-pin"></i>
+        <h5>Medicine</h5>
+      </a>
+    </li>
+    {% if request.user.role == 'assistance' %}
+    <li class="{% if request.path == notifications_url %}active{% endif %}">
+      <a href="{% url 'prescribing_management:notifications_index' %}">
+        <i class="tim-icons icon-bell-55"></i>
+        <h5>Schedule</h5>
+      </a>
+    </li>
+    {% endif %}
+
+    <li class="{% if request.path == prescription_url %}active{% endif %}">
+      <a href="{% url 'prescribing_management:prescription_index' %}">
+        <i class="tim-icons icon-paper"></i>
+        <h5>Prescription</h5>
+      </a>
+    </li>
+
+    {% url 'prescribing_management:invoice_index' as invoice_url %}
+
+    <li class="{% if request.path == invoice_url %}active{% endif %}">
+      <a href="{% url 'prescribing_management:invoice_index' %}">
+        <i class="tim-icons icon-single-02"></i>
+        <h5>Invoice</h5>
+      </a>
+    </li>
+
+    {% url 'payment:payment_selection' as payment_url%}
+
+    <li class="{% if request.path == payment_url %}active{% endif %}">
+      <a href="{% url 'payment:payment_selection' %}">
+        <i class="tim-icons icon-credit-card"></i>
+        <h5>PAYMENT</h5>
+      </a>
+    </li>
+
+    {% url 'report:general' as report_url %}
+
+    <li class="{% if request.path == report_url %}active{% endif %}">
+      <a href="{% url 'report:general' %}">
+        <i class="tim-icons icon-puzzle-10"></i>
+        <h5>Report</h5>
+      </a>
+    </li>
+  </ul>
+</div>

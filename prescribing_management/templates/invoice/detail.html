@@ -1,0 +1,91 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="container d-flex justify-content-center">
+  <div class="card ml-8 w-100 p-3">
+    <div class="card-header">
+      <h3 class="text-center">INVOICE ID {{ invoice.id }}</h3>
+    </div>
+    <div class="card-body">
+      <p>Patient name: {{invoice.patient}}</p>
+      <p>Create at: {{invoice.created_at|date:'d/m/Y'}}</p>
+      <p>Total: {{ invoice.total }}</p>
+      <table class="table">
+        <thead>
+          <th>Medicine id</th>
+          <th>Medicine name</th>
+          <th>Medicine unit price</th>
+          <th>Quantity</th>
+          <th>Line total</th>
+        </thead>
+        {% for detail in invoice.invoicedetail_set.all %}
+        <tr>
+          <td>{{detail.medicine.id}}</td>
+          <td>{{detail.medicine.name}}</td>
+          <td>{{detail.unit_price}}</td>
+          <td>{{detail.quantity}}</td>
+          <td>{{detail.get_line_total}}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      <a
+        href="{% url 'prescribing_management:invoice_edit' invoice.id %}"
+        class="btn btn-primary btn-sm"
+        >EDIT</a
+      >
+      <a
+        href=""
+        class="btn btn-danger btn-sm"
+        data-bs-toggle="modal"
+        onclick="deleteData('{{ invoice.id }}')"
+      >
+        DELETE</a
+      >
+      <a
+        href="{% url 'prescribing_management:invoice_print' invoice.id %}"
+        class="btn btn-info btn-sm"
+      >
+        PRINT</a
+      >
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="deleteConfirmation" tabindex="-1">
+  <div class="modal-dialog">
+    <form class="modal-content" id="delete-form" method="post">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete confirmation</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        {% csrf_token %}
+        <input type="hidden" name="pk" id="delete-prescription-id" />
+        <p>Are you sure to delete this item?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary">Confirm</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %} {% block script %}
+<script>
+  const deleteData = (id) => {
+    const deleteConfirmation = document.getElementById("deleteConfirmation");
+    var myModal = new bootstrap.Modal(deleteConfirmation);
+    myModal.toggle();
+    idInput = document.getElementById("delete-form");
+    idInput.action =
+      "{% url 'prescribing_management:prescription_delete' 0%}".replace(0, id);
+  };
+</script>
+{% endblock %}

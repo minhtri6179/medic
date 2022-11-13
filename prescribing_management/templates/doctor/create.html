@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block content %}
+<form action="{% url 'prescribing_management:doctor_create' %}" method="post">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label for="name" class="form-label">Name</label>
+    <input
+      type="text"
+      class="form-control"
+      name="name"
+      id="name"
+      aria-describedby="nameHelp"
+    />
+    <div id="nameHelp" class="form-text">Please enter patient's name here</div>
+  </div>
+  <div class="mb-3">
+    <label for="age" class="form-label">Age</label>
+    <input type="number" name="age" class="form-control" id="age" />
+  </div>
+  <div class="mb-3 form-check">
+    <label class="form-check-label" for="gender">Gender</label>
+    <select name="gender" id="gender">
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="unknown">Unknown</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="address" class="form-label">Address</label>
+    <input type="text" name="address" class="form-control" id="address" />
+  </div>
+  {{ form.age }}
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %}

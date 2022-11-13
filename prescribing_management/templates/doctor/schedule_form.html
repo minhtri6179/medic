@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+  <div class="container d-flex justify-content-center">
+    <div class="card ml-8 w-75 p-3">
+      <div class="card-header">
+        {% if action == 'edit' %}
+        <h3 class="text-center">Change appointment status</h3>
+        {% else %}
+        <h3 class="text-center">Book a medical appointment</h3> 
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <p class="card-text">
+          
+            {% if action == 'edit' %}
+            <form action="{% url 'prescribing_management:notification_done' pk %}" method="post">
+            {% else %}
+            <form action="{% url 'prescribing_management:make_appointment'%}" method="post" class=" needs-validation">
+              {% endif %}
+            {% csrf_token %}
+            {{ form.as_div }}
+            {{ form.media }}
+
+            <div>    
+              {% if action == 'edit' %}
+              <button type="submit" class="btn btn-primary">CHANGE</button>
+              <a href="{% url 'prescribing_management:notifications_index' %}" class="btn btn-danger">BACK</a>
+              {% else %}
+              <button type="submit" class="btn btn-primary">ADD</button>
+              <a href="{% url 'prescribing_management:doctor_index' %}" class="btn btn-danger">BACK</a>
+              {% endif %}        
+              </div>
+          </form> 
+        </p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.1.1.js"
+  integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+  crossorigin="anonymous"></script>
+<script>
+  var jquery_version = jQuery.noConflict();
+  $( function() {
+    $( "#datepicker" ).datepicker();
+  } );
+  function validateField(formElement, fieldElement, inputNode) {
+    let formData = new FormData(formElement);
+    formData.append('__field_name__', fieldElement.name);
+    
+    
+    fetch('/api/schedule/validate', 
+    {
+      body: formData,
+      method: "post",
+      
+    }
+    ).then(res => res.json())
+    .then(function (data) {
+      let errors = data.errors;
+      // console.log(errors)
+      fieldWrapperNode = inputNode.parentNode
+      fieldWrapperNode.classList.add('was-validated')
+      errorsWrapperElement = fieldWrapperNode.getElementsByClassName('invalid-feedback')
+      if (! errorsWrapperElement.length){
+        errorsWrapperElement = document.createElement('div')
+        errorsWrapperElement.classList = 'invalid-feedback mt-1'
+      }
+      else {
+        errorsWrapperElement = errorsWrapperElement[0]
+      }
+      if (errors.length === 0) {
+        inputNode.setCustomValidity('')
+        if (errorsWrapperElement) {
+          errorsWrapperElement.innerHTML = "";
+        }
+        inputNode.classList.remove('is-invalid');
+        inputNode.classList.add('is-valid');
+      } else {
+        if (errorsWrapperElement) {
+          let errorsHtml = '';
+          let errorsText = ''
+          for (let i = 0; i < errors.length; i++) {
+            errorsHtml += `${errors[i]}`;
+            errorsText += `${errors[i]}\n`
+          }
+          inputNode.setCustomValidity(errorsText)
+          
+          errorsWrapperElement.innerHTML = errorsHtml;
+        }
+        fieldWrapperNode.append(errorsWrapperElement)
+        inputNode.classList.remove('is-valid');
+        inputNode.classList.add('is-invalid');
+        
+      }
+    });
+  }
+
+function initFormValidation() {
+  document.querySelectorAll("form").forEach(function (formElement) {
+    formElement.querySelectorAll("[name]").forEach(fieldElement => {
+      fieldElement.addEventListener("focus", event => {
+        validateField(formElement, fieldElement, event.target);
+      });
+      fieldElement.addEventListener("change", event => {
+        validateField(formElement, fieldElement, event.target);
+      });
+
+    });
+  });
+}
+
+(() => {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  const forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+
+      form.classList.add('was-validated')
+    }, false)
+    initFormValidation()
+
+  })
+})()
+
+
+</script>
+{% endblock %}

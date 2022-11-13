@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container d-flex justify-content-center">
+    <div class="card ml-8 w-100 p-3">
+        <div class="card-header">
+            <h3 class="text-center">{% if action == 'edit' %} EDIT {% else %} CREATE NEW{% endif %} PRESCRIPTION</h3> 
+        </div>
+        <div class="card-body">
+
+            {% if action == 'edit' %}
+            <form action="{% url 'prescribing_management:prescription_edit' pk %}" method="post">
+            {% else %}
+            <form action="{% url 'prescribing_management:prescription_create' %}" method="post">
+            {% endif %}
+                {% csrf_token %}
+                {{ form.as_div }}
+                <div id="prescription-detail-list">
+                </div>
+                <div class="d-flex justify-content-end">
+                    <div onclick="fetchData()" class="btn btn-info">ADD MEDICINE </div>
+
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary">SUBMIT</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="medicine-tab" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Medicine tab</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="medicine-content">
+          <p>Choose medicine for prescription</p>
+          <input type="text" name="keyword" id="medicine-keyword">
+          <button class='btn btn-primary' onclick="searchMedicine()">Search</button>
+          <select name="medicines" class="form-control" required="" id="medicine-select" multiple>
+           
+          
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="chooseMedicine()">Confirm</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block script %}
+<script>
+    
+    const fetchData = () =>{
+        fetch("{% url 'api:medicine_list' %}")
+        .then(res => res.json())
+        .then(data => {
+            console.log(`data: ${data}`)
+            content = document.getElementById('medicine-select')
+            
+
+            
+            result = data.map(val => `<option value='${val.id}'>Medicine name: ${val.medicineName} </option>`).join('')
+            console.log(`result: ${result}}`)
+            console.log(result==null)
+            content.innerHTML = result
+        })
+        .catch(err => console.log(err))
+        const medicineTab = document.getElementById("medicine-tab")
+        var myModal = new bootstrap.Modal(medicineTab)
+        myModal.show()
+    }
+    const searchMedicine = () => {
+        keyword = document.getElementById('medicine-keyword').value
+        fetch(`{% url 'api:medicine_list'%}?keyword=${keyword}`)
+        .then(res => res.json())
+        .then(data => {
+            console.log(`data: ${data}`)
+            content = document.getElementById('medicine-select')
+            
+
+            
+            result = data.map(val => `<option value='${val.id}'>Medicine name: ${val.medicineName} </option>`).join('')
+            console.log(`result: ${result}}`)
+            console.log(result==null)
+            content.innerHTML = result
+        })
+        .catch(err => console.log(err))
+    }
+    const createMedicineDiv = (medicine) => {
+        preDiv = document.createElement('div')
+        preDiv.className = 'prescription-detail row'
+        
+        medicineIdInput = document.createElement('input')
+        medicineIdInput.name = 'medicine-ids'
+        medicineIdInput.type = 'hidden'
+        medicineIdInput.value = medicine.id
+
+        medicineNameDiv = document.createElement('div')
+        medicineNameDiv.textContent = medicine.name
+        medicineNameDiv.className = 'col-3'
+
+        medicineUsageInput = document.createElement('input')
+        medicineUsageInput.type = 'text'
+        medicineUsageInput.value = medicine.usage
+        medicineUsageInput.name = 'medicine-usages'
+        medicineUsageInput.placeholder = "Usage"
+        medicineUsageInput.className = 'form-control'
+        medicineUsageInput.required = true
+
+        medicineDosageInput = document.createElement('input')
+        medicineDosageInput.type = 'number'
+        medicineDosageInput.size = 1
+        medicineDosageInput.name = 'medicine-numbers'
+        medicineDosageInput.value = medicine.dosage
+        medicineDosageInput.placeholder = "Number"
+        medicineDosageInput.className = 'form-control'
+        medicineDosageInput.required = true
+        medicineDosageInput.min = 1
+
+        
+
+        usageDiv = document.createElement('div')
+        usageDiv.className = 'col-4'
+        usageDiv.append(medicineUsageInput)
+
+        dosageDiv = document.createElement('div')
+        dosageDiv.className = 'col-2'
+        dosageDiv.append(medicineDosageInput)
+
+        unitDiv = document.createElement('div')
+        unitDiv.className = 'col-1'
+        unitDiv.textContent = medicine.unit
+
+        deleteDiv = document.createElement('div')
+        deleteDiv.className = 'col-1'
+        deleteDiv.innerHTML = '<i class="fa-solid fa-trash"></i>'
+        deleteDiv.style.cursor = 'pointer'
+        deleteDiv.addEventListener('click', (event) => {
+            event.currentTarget.parentElement.remove()
+        })
+
+        preDiv.append(medicineIdInput)
+        preDiv.append(medicineNameDiv)
+        preDiv.append(usageDiv)
+        preDiv.append(dosageDiv)
+        preDiv.append(unitDiv)
+        preDiv.append(deleteDiv)
+        return preDiv
+    }
+
+    const chooseMedicine =async () => {
+        var selectedItem = [...document.querySelectorAll("#medicine-select option:checked")].map(element => element.value)
+        
+        console.log(selectedItem)
+        prescriptionDiv = document.getElementById('prescription-detail-list')
+        medicineList = await Promise.all(selectedItem.map(async element => {
+            const response = await fetch("{% url 'api:medicine_detail' 0 %}".replace('0', element))
+            console.log(response)
+            const data = await response.json()
+            console.log(data)
+            return data
+        }))
+        prescriptionMedicineList = [...document.querySelectorAll('input[name="medicine-ids"]')].map(element => element.value)
+        if (prescriptionMedicineList.length == 0){
+            medicineList.forEach(element => {
+                var preDiv = createMedicineDiv(element)
+                
+                prescriptionDiv.append(preDiv)
+            });
+        }
+        else{
+            medicineList.forEach(element => {
+                if (! prescriptionMedicineList.includes(element.id.toString())){
+                    var preDiv = createMedicineDiv(element)
+                    
+                    prescriptionDiv.append(preDiv)
+                }
+            })
+            
+        }
+
+
+
+        var medicineModal = bootstrap.Modal.getInstance(document.getElementById("medicine-tab"))
+        medicineModal.hide()
+    }
+    (function() {
+        var details = []
+        {% for detail in details %}
+            details.push(createMedicineDiv({
+                'id': '{{ detail.medicine.id }}', 
+                'name': '{{ detail.medicine.name }}',
+                'dosage': '{{ detail.number }}',
+                'unit': '{{ detail.medicine.unit }}',
+                'usage': '{{ detail.usage }}'                
+            }))
+        {% endfor %}
+
+        prescriptionDiv = document.getElementById('prescription-detail-list')
+        details.forEach(element =>prescriptionDiv.append(element))
+
+
+    })();
+</script>
+{% endblock %}

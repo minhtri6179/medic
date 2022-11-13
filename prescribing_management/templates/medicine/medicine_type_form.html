@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container d-flex justify-content-center">
+  <div class="card ml-8 w-75 p-3">
+    <div class="card-header">
+      <h3 class="text-center">{% if action == 'edit' %} EDIT {% else %} CREATE NEW{% endif %} MEDICINE TYPE</h3> 
+    </div>
+    <div class="card-body">
+      <p class="card-text">
+        {% if action == 'edit' %}
+          <form action="{% url 'prescribing_management:medicine_type_edit' pk %}" method="post" class=" needs-validation">
+        {% else %}
+          <form action="{% url 'prescribing_management:medicine_type_create' %}" method="post" class=" needs-validation">
+
+        {% endif %}
+
+            {% csrf_token %}
+            {{ form.as_div }}
+            <button type="submit" class="btn btn-primary">ADD</button>
+            <a href="{% url 'prescribing_management:medicine_type_index' %}" class="btn btn-danger">BACK</a>
+
+          </form>
+      </p>
+    </div>
+  </div>
+</div>
+  
+{% endblock %}
+
+
+{% block script %}
+<script>
+  
+  function validateField(formElement, fieldElement, inputNode) {
+    let formData = new FormData(formElement);
+    formData.append('__field_name__', fieldElement.name);
+      console.log(formData)
+    fetch('/api/medicinetype/validate', 
+    {
+      body: formData,
+      method: "post"
+    }
+    ).then(res => res.json())
+    .then(function (data) {
+      console.log(data)
+      let errors = data.errors;
+      // console.log(errors)
+      fieldWrapperNode = inputNode.parentNode
+      fieldWrapperNode.classList.add('was-validated')
+      errorsWrapperElement = fieldWrapperNode.getElementsByClassName('invalid-feedback')
+      if (! errorsWrapperElement.length){
+        errorsWrapperElement = document.createElement('div')
+        errorsWrapperElement.classList = 'invalid-feedback mt-1'
+      }
+      else {
+        errorsWrapperElement = errorsWrapperElement[0]
+      }
+      if (errors.length === 0) {
+        inputNode.setCustomValidity('')
+        if (errorsWrapperElement) {
+          errorsWrapperElement.innerHTML = "";
+        }
+        inputNode.classList.remove('is-invalid');
+        inputNode.classList.add('is-valid');
+      } else {
+        if (errorsWrapperElement) {
+          let errorsHtml = '';
+          let errorsText = ''
+          for (let i = 0; i < errors.length; i++) {
+            errorsHtml += `${errors[i]}`;
+            errorsText += `${errors[i]}\n`
+          }
+          inputNode.setCustomValidity(errorsText)
+          
+          errorsWrapperElement.innerHTML = errorsHtml;
+        }
+        fieldWrapperNode.append(errorsWrapperElement)
+        inputNode.classList.remove('is-valid');
+        inputNode.classList.add('is-invalid');
+        
+      }
+    });
+  }
+
+function initFormValidation() {
+  document.querySelectorAll("form").forEach(function (formElement) {
+    formElement.querySelectorAll("[name]").forEach(fieldElement => {
+      fieldElement.addEventListener("focus", event => {
+        validateField(formElement, fieldElement, event.target);
+      });
+      fieldElement.addEventListener("change", event => {
+        validateField(formElement, fieldElement, event.target);
+      });
+
+    });
+  });
+}
+
+(() => {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  const forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+
+      form.classList.add('was-validated')
+    }, false)
+    initFormValidation()
+
+  })
+})()
+
+
+</script>
+{% endblock %}

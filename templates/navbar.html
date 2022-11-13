@@ -1,0 +1,184 @@
+<!-- {% load static %}
+<div class="nav-bar">
+    <div class="logo"><a href="{% url 'home' %}"><img width='100' height='60' src="{% static 'img/logo.png' %}" alt=""></a></div>
+    <ul class="navbar-list">
+        <li class="navbar-item"> 
+            <a href="{% url 'prescribing_management:patient_index' %}">Patient</a>
+            
+        </li>
+        <li class="navbar-item">
+            <a href="{% url 'prescribing_management:medicine_index' %}">Medicine</a>
+        </li>
+        <li class="navbar-item"><a href="{% url 'prescribing_management:prescription_index' %}">Prescription</a></li>
+        <li class="navbar-item"><a href="{% url 'prescribing_management:invoice_index' %}">Invoice</a></li>
+        <li class="navbar-item"><a href="{% url 'report:general' %}">Report</a></li>
+    </ul>
+    <div class="side-item">
+        <div class="search-bar">
+            <label for="search"></label>
+            <input type="text" name="search" id="search-bar" size="10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+        </div>
+        <div class="profile">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-badge" viewBox="0 0 16 16">
+                <path d="M6.5 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                <path d="M4.5 0A2.5 2.5 0 0 0 2 2.5V14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2.5A2.5 2.5 0 0 0 11.5 0h-7zM3 2.5A1.5 1.5 0 0 1 4.5 1h7A1.5 1.5 0 0 1 13 2.5v10.795a4.2 4.2 0 0 0-.776-.492C11.392 12.387 10.063 12 8 12s-3.392.387-4.224.803a4.2 4.2 0 0 0-.776.492V2.5z"/>
+            </svg>
+        </div>
+        
+    </div>
+</div> -->
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
+  <div class="container-fluid">
+    <div class="navbar-wrapper">
+      <div class="navbar-toggle d-inline">
+        <button type="button" class="navbar-toggler">
+          <span class="navbar-toggler-bar bar1"></span>
+          <span class="navbar-toggler-bar bar2"></span>
+          <span class="navbar-toggler-bar bar3"></span>
+        </button>
+      </div>
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <i class="fa fa-pie-chart" aria-hidden="true"></i>
+        <!--img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2fEfZCQhMWvj1mFdZ_9zcRs4UWDThUW4err1O-tm4FA&s'-->
+      </a>
+    </div>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navigation"
+      aria-controls="navigation-index"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-bar navbar-kebab"></span>
+      <span class="navbar-toggler-bar navbar-kebab"></span>
+      <span class="navbar-toggler-bar navbar-kebab"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navigation">
+      <ul class="navbar-nav ml-auto">
+        <div class="search-bar input-group">
+          <!-- <input type="text" class="form-control" placeholder="Search...">
+      <div class="input-group-addon"><i class="tim-icons icon-zoom-split"></i></div> -->
+          <button
+            class="btn btn-link"
+            id="search-button"
+            data-toggle="modal"
+            data-target="#searchModal"
+          >
+            <i class="tim-icons icon-zoom-split"></i>
+          </button>
+          <!-- You can choose types of search input -->
+        </div>
+        <!-- <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="SEARCH">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i class="tim-icons icon-simple-remove"></i>
+          </button>
+        </div>
+
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div> -->
+        <li class="dropdown nav-item">
+          <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+            <div class="notification d-none d-lg-block d-xl-block"></div>
+            <i class="tim-icons icon-sound-wave"></i>
+            <p class="d-lg-none">New Notifications</p>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-right dropdown-navbar">
+            <li class="nav-link">
+              <a href="#" class="nav-item dropdown-item"
+                >Mike John responded to your email</a
+              >
+            </li>
+            <li class="nav-link">
+              <a href="#" class="nav-item dropdown-item"
+                >You have 5 more tasks</a
+              >
+            </li>
+            <li class="nav-link">
+              <a href="#" class="nav-item dropdown-item"
+                >Your friend Michael is in town</a
+              >
+            </li>
+            <li class="nav-link">
+              <a href="#" class="nav-item dropdown-item"
+                >Another notification</a
+              >
+            </li>
+            <li class="nav-link">
+              <a href="#" class="nav-item dropdown-item">Another one</a>
+            </li>
+          </ul>
+        </li>
+        <li class="dropdown nav-item">
+          <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+            <div class="photo">
+              {% load static %}
+              <img src="{% static 'assets/img/anime3.png' %}" />
+            </div>
+            <b class="caret d-none d-lg-block d-xl-block"></b>
+            <p class="d-lg-none">User</p>
+          </a>
+          <ul class="dropdown-menu dropdown-navbar">
+            <li class="nav-link">
+              <a href="#" class="nav-item dropdown-item">Profile</a>
+            </li>
+            <li class="nav-link">
+              <a href="#" class="nav-item dropdown-item">Settings</a>
+            </li>
+            <div class="dropdown-divider"></div>
+            <li class="nav-link">
+              <a href="{% url 'logout' %}" class="nav-item dropdown-item"
+                >Log out</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li class="separator d-lg-none"></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div
+  class="modal fade"
+  id="searchModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="searchModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <input
+          type="text"
+          class="form-control"
+          id="inlineFormInputGroup"
+          placeholder="SEARCH"
+        />
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <i class="tim-icons icon-simple-remove"></i>
+        </button>
+      </div>
+      <div class="modal-footer"></div>
+    </div>
+  </div>
+</div>
+<!-- End Navbar -->

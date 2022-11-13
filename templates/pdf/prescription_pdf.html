@@ -1,0 +1,244 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Prescription {{prescription.id}}</title>
+    <style>
+        .header{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            padding-left: 30px;
+            padding-right: 30px;
+            font-size: large;
+        }
+    </style>
+</head>
+<body>
+        <h4 >Clinic number 14</h4>
+        <p>Address 13245  Zii street, LA, USA</p>
+        <p>Phone number: 088888888888</p>
+        <span class="item">
+            id: {{ prescription.id }}
+        </span>
+    </div>
+
+</body>
+</html> -->
+
+
+
+{% load static %}
+<!doctype html>
+<html>
+<head>
+    <!-- <meta charset="UTF-8"> -->
+    <meta http-equiv=Content-Type content="text/html;charset=utf-8">
+    <meta charset="UTF-8">
+
+    <title>Prescription id {{ prescription.id }}</title>
+    
+    <style type="text/css">
+
+
+        @page {
+            size: A4;
+            margin: 1cm;
+            margin-bottom: 2.5cm;
+            @frame footer {
+                -pdf-frame-content: footer_content;
+                -pdf-frame-border: 1;
+                bottom: 2cm;
+                margin-left: 1cm;
+                margin-right: 1cm;
+                height: 1cm;
+            }
+        }
+
+
+        *{
+            font-size: 13px;
+            font-family: 'Times New Roman';
+        }
+        .table, td, th {  
+        border-bottom: 1px solid #ddd;
+        border-top: 1px solid #ddd;
+        text-align: left;
+        }
+
+        .table {
+        border-collapse: collapse;
+        width: 100%;
+
+        }
+
+        .table th, td {
+        padding: 5px;
+        text-align: center;
+        }
+
+        .td{
+        word-break: inherit;
+        }
+
+        .list-group h3{
+            font-size: 3em;
+        }
+        .list-group p {
+            font-size: 1em;
+        }
+
+        .table1 {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 5px;
+            background-color: #fff;
+            border: none;
+            text-align: center;
+        }
+        .table2 {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 5px;
+            background-color: #fff;
+            border: none;
+        }
+        .table2 td{
+            border: none;
+            text-align: start;
+            padding-left: 20px
+        }
+        .table1 td {
+            border: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="footer_content">
+        <table class="table1">
+            <td></td>
+            <td style="text-align:end;">
+                (c) - page <pdf:pagenumber>
+                    of <pdf:pagecount>
+            </td>
+        </table>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <table class="table1">
+                <td>
+                    <div>
+                        <h3>Clinic number 14</h3>
+                        <p>Address: 118 Helm Street, LA, USA</p>
+                        <p>Phone number: 0888888888 </p>
+                    </div>
+                </td>
+                <td>
+                    <div class="list-group">
+                        <pdf:barcode value="PRESCRIPTION{{prescription.id}}" type="code128" humanreadable="1" size="4" align="middle" />
+
+                        <p>Created date: {{ prescription.created_at|date:"d/m/Y" }}</p>
+                    </div>
+                </td>
+            </table>
+            <h1 align="center" > <font size="7">Prescription</font></h1>
+            <table class="table2" style="font-size: 3;">
+                <tr>
+                    <td>Patient name: <font size="4" style="font-weight: bold;">{{ prescription.patient.name }}</font></td>
+                    <td>Age: {{ prescription.patient.age}}</td>
+                </tr>
+                <tr>
+                    <td>Gender: {{ prescription.patient.gender }}</td>
+                    <td>Phone number: {{ prescription.patient.phone }}</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        Address: {{ prescription.patient.address }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Height: {{ prescription.patient.height|default_if_none:""  }} cm</td>
+                    <td>Weight: {{ prescription.patient.weight|default_if_none:""  }} Kg</td>
+                </tr>
+                
+            </table>
+            <table class="table2">
+                <td>Temperature: {{ prescription.patient.temperature|default_if_none:""  }} <sup>o</sup>C</td>
+                <td>Blood pressure: {{ prescription.patient.blood_pressure|default_if_none:""  }} mmHg</td>
+                <td>Heart rate: {{ prescription.patient.heart_rate|default_if_none:""  }} bpm</td>
+
+            </table>
+            <table class="table2">
+                <td><font size="4" style="font-weight:bold;">Diagnosis: {{prescription.diagnosis}}</font> </td>
+            </table>
+            <br/>
+            <h5 align="center" ><font size="4">Prescription's medicine list</font> </h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                    <th>
+                        #
+                    </th>
+                    <th>
+                        Medicine Name
+                    </th>
+                    <th>
+                    Usage
+                    </th>
+                    <th>
+                        Number
+                    </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detail in prescription.prescriptiondetail_set.all %}
+                    <tr>
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+                    <td>
+                        {{ detail.medicine.name }}
+
+                    </td>
+
+                    <td>
+                            {{ detail.usage }}
+                    </td>
+
+                    <td>
+                            {{ detail.number }} {{ detail.medicine.unit }}
+
+                    </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br/>
+            <br/>
+            <br/>
+            <table class="table1">
+                <td>
+                    <font size="4">NOTE: {{prescription.note}}</font>
+
+                </td>
+                <td> 
+                    <div>{{ prescription.created_at|date:"jS F Y H:i" }} </div> 
+                    <div>Doctor</div>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <div>{{prescription.patient.doctor}}</div>
+                </td>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

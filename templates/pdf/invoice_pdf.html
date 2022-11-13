@@ -1,0 +1,237 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Invoice {{invoice.id}}</title>
+    <style>
+        .header{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            padding-left: 30px;
+            padding-right: 30px;
+            font-size: large;
+        }
+    </style>
+</head>
+<body>
+        <h4 >Clinic number 14</h4>
+        <p>Address 13245  Zii street, LA, USA</p>
+        <p>Phone number: 088888888888</p>
+        <span class="item">
+            id: {{ invoice.id }}
+        </span>
+    </div>
+
+</body>
+</html> -->
+
+
+
+{% load static %}
+<!doctype html>
+<html>
+<head>
+    <!-- <meta charset="UTF-8"> -->
+    <meta http-equiv=Content-Type content="text/html;charset=utf-8">
+    <meta charset="UTF-8">
+
+    <title>Invoice id {{ invoice.id }}</title>
+    
+    <style type="text/css">
+
+
+        @page {
+            size: A4;
+            margin: 1cm;
+            margin-bottom: 2.5cm;
+            @frame footer {
+                -pdf-frame-content: footer_content;
+                -pdf-frame-border: 1;
+                bottom: 2cm;
+                margin-left: 1cm;
+                margin-right: 1cm;
+                height: 1cm;
+            }
+        }
+
+
+        *{
+            font-size: 13px;
+            font-family: 'Times New Roman';
+        }
+        .table, td, th {  
+        border-bottom: 1px solid #ddd;
+        border-top: 1px solid #ddd;
+        text-align: left;
+        }
+
+        .table {
+        border-collapse: collapse;
+        width: 100%;
+
+        }
+
+        .table th, td {
+        padding: 5px;
+        text-align: center;
+        }
+
+        .td{
+        word-break: inherit;
+        }
+
+        .list-group h3{
+            font-size: 3em;
+        }
+        .list-group p {
+            font-size: 1em;
+        }
+
+        .table1 {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 5px;
+            background-color: #fff;
+            border: none;
+            text-align: center;
+        }
+        .table2 {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 5px;
+            background-color: #fff;
+            border: none;
+        }
+        .table2 td{
+            border: none;
+            text-align: start;
+            padding-left: 20px
+        }
+        .table1 td {
+            border: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="footer_content">
+        <table class="table1">
+            <td></td>
+            <td style="text-align:end;">
+                (c) - page <pdf:pagenumber>
+                    of <pdf:pagecount>
+            </td>
+        </table>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <table class="table1">
+                <td>
+                    <div>
+                        <h3>Clinic number 14</h3>
+                        <p>Address: 118 Helm Street, LA, USA</p>
+                        <p>Phone number: 0888888888 </p>
+                    </div>
+                </td>
+                <td>
+                    <div class="list-group">
+                        <pdf:barcode value="INVOICE{{invoice.id}}" type="code128" humanreadable="1" size="4" align="middle" />
+
+                        <p>Created date: {{ invoice.created_at|date:"F jS Y" }}</p>
+                    </div>
+                </td>
+            </table>
+            <h1 align="center" > <font size="7">Invoice</font></h1>
+            <table class="table2" style="font-size: 3;">
+                <tr>
+                    <td>Name: <font size="4" style="font-weight: bold;">{{ invoice.patient.name }}</font></td>
+                    <td>Age: {{ invoice.patient.age}}</td>
+                </tr>
+                <tr>
+                    <td>Gender: {{ invoice.patient.gender }}</td>
+                    <td>Phone number: {{ invoice.patient.phone }}</td>
+                </tr>
+                
+            </table>
+            <br/>
+            <h5 ><font size="4" >Invoice's details</font> </h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                    <th>
+                        #
+                    </th>
+                    <th>
+                        Medicine Name
+                    </th>
+                    <th>
+                        Unit price
+                    </th>
+                    <th>
+                        Quantity
+                    </th>
+                    <th>
+                        Line total
+                    </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detail in invoice.invoicedetail_set.all %}
+                    <tr>
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+                    <td>
+                        {{ detail.medicine.name }}
+                    </td>
+                    <td>
+                        {{ detail.unit_price }}
+
+                    </td>
+
+                    <td>
+                        {{ detail.quantity }}
+
+                    </td>
+                    <td>
+                        {{ detail.line_total }}
+                    </td>
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h1 align="right" > <font size="4">TOTAL: {{ invoice.total }}</font></h1>
+
+            <br/>
+            <br/>
+            <br/>
+            <table class="table1">
+                <td>
+                    <br/>
+                    <div>Patient</div>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <div>{{ invoice.patient.name }}</div>
+                </td>
+                <td> 
+                    <div>{{ invoice.created_at|date:"F jS Y" }} </div> 
+                    <div>Created by</div>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <div>{{ invoice.created_by.name }}</div>
+                </td>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,422 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container d-flex justify-content-center">
+    <div class="card ml-8 w-100 p-3">
+        <div class="card-header">
+            <h3 class="text-center">{% if action == 'edit' %} EDIT {% else %} CREATE NEW{% endif %} INVOICE</h3> 
+        </div>
+        <div class="card-body">
+
+            {% if action == 'edit' %}
+            <form action="{% url 'prescribing_management:invoice_edit' pk %}" method="post" class="needs-validation" id="invoice-form">
+            {% else %}
+            <form action="{% url 'prescribing_management:invoice_create' %}" method="post" class="needs-validation" id="invoice-form">
+            {% endif %}
+                {% csrf_token %}
+                {{ form.as_div }}
+                <div id="invoice-detail-list">
+                </div>
+                <div class="d-flex justify-content-end">
+                    <div onclick="fetchData()" class="btn btn-info">Add medicine </div>
+                </div>
+
+                <div>INVOICE TOTAL: <span id="invoice-total">{% if form.total %} {{ form.total }} {% else %} 0 {% endif %}</span> <input type="hidden" name="total"></div>
+                <button type="submit" class="btn btn-primary">SUBMIT</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="medicine-tab" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Medicine tab</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="medicine-content">
+          <p>Choose medicine for invoice</p>
+          <input type="text" name="keyword" id="medicine-keyword">
+          <button class='btn btn-primary' onclick="searchMedicine()">Search</button>
+          <select name="medicines" class="form-control" required="" id="medicine-select" multiple>
+           
+          
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="chooseMedicine()">Confirm</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block script %}
+<script>
+    
+    const fetchData = () =>{
+        fetch("{% url 'api:medicine_list' %}")
+        .then(res => res.json())
+        .then(data => {
+            console.log(`data: ${data}`)
+            content = document.getElementById('medicine-select')
+            
+
+            
+            result = data.map(val => `<option value='${val.id}'>Medicine name: ${val.medicineName} </option>`).join('')
+            console.log(`result: ${result}}`)
+            console.log(result==null)
+            content.innerHTML = result
+        })
+        .catch(err => console.log(err))
+        const medicineTab = document.getElementById("medicine-tab")
+        var myModal = new bootstrap.Modal(medicineTab)
+        myModal.show()
+    }
+    const searchMedicine = () => {
+        keyword = document.getElementById('medicine-keyword').value
+        fetch(`{% url 'api:medicine_list'%}?keyword=${keyword}`)
+        .then(res => res.json())
+        .then(data => {
+            console.log(`data: ${data}`)
+            content = document.getElementById('medicine-select')
+            
+
+            
+            result = data.map(val => `<option value='${val.id}'>Medicine name: ${val.medicineName} </option>`).join('')
+            console.log(`result: ${result}}`)
+            console.log(result==null)
+            content.innerHTML = result
+        })
+        .catch(err => console.log(err))
+    }
+    const createMedicineDiv = (medicine) => {
+        preDiv = document.createElement('div')
+        preDiv.className = 'invoice-detail row'
+        
+        medicineIdInput = document.createElement('input')
+        medicineIdInput.name = 'medicine-ids'
+        medicineIdInput.type = 'hidden'
+        medicineIdInput.value = medicine.id
+
+        medicineNameDiv = document.createElement('div')
+        medicineNameDiv.textContent = medicine.name
+        medicineNameDiv.className = 'col-3'
+
+        medicineUnitPriceInput = document.createElement('input')
+        medicineUnitPriceInput.type = 'number'                
+        medicineUnitPriceInput.value = medicine.sale_price
+        medicineUnitPriceInput.name = 'medicine-unit-prices'
+        medicineUnitPriceInput.placeholder = "Unit price"
+        medicineUnitPriceInput.className = 'form-control'
+        medicineUnitPriceInput.required = true
+        medicineUnitPriceInput.min = 
+        medicineUnitPriceInput.addEventListener('change', (event)=>{
+            try{
+                parentNode = event.target.parentElement.parentElement
+                lineTotal = parentNode.querySelector('.line-total')
+                quantity = parseInt(parentNode.querySelector('input[name="medicine-quantities"]').value)
+                unitPrice = parseFloat(parentNode.querySelector('input[name="medicine-unit-prices"]').value)
+                lineTotal.textContent = new Intl.NumberFormat().format(quantity*unitPrice)
+                updateTotal()
+
+                inputWrapperNode = event.currentTarget.parentElement;
+                inputWrapperNode.classList.add('was-validated')
+                errorsWrapperElement = inputWrapperNode.getElementsByClassName('invalid-feedback')
+                if (! errorsWrapperElement.length){
+                    errorsWrapperElement = document.createElement('div')
+                    errorsWrapperElement.classList = 'invalid-feedback mt-1'
+                    inputWrapperNode.append(errorsWrapperElement)
+                }
+                else {
+                    errorsWrapperElement = errorsWrapperElement[0]
+                }
+                const handle_validate = errorString =>{
+                    if  (errorString)
+                    {
+                        event.currentTarget.classList.add('is-invalid')
+                        event.currentTarget.classList.remove('is-valid')
+                        errorsWrapperElement.innerHTML = errorString
+                        event.currentTarget.setCustomValidity(errorString)
+                        return true;
+                    }
+                    else{
+                        event.currentTarget.classList.remove('is-invalid')
+                        event.currentTarget.classList.add('is-valid')
+                        errorsWrapperElement.innerHTML = ''
+                        event.currentTarget.setCustomValidity('')
+                        return false
+                    }
+                } 
+                validate_chain = [ validate_require, validate_gt_zero ]
+                for(i=0;i<validate_chain.length; i++)
+                {
+                    result = validate_chain[i](event.target.value, handle_validate)
+                    if (result)
+                    break
+                }
+
+            }
+            catch(error){
+                console.log(error)
+            }
+        })
+
+
+        quantityInput = document.createElement('input')
+        quantityInput.type = 'number'
+        quantityInput.size = 1
+        quantityInput.name = 'medicine-quantities'
+        quantityInput.value = medicine.quantity
+        quantityInput.placeholder = "Quantity"
+        quantityInput.className = 'form-control'
+        quantityInput.required = true
+        quantityInput.min = 1
+        quantityInput.addEventListener('change', async (event)=>{
+            try{
+                parentNode = event.target.parentElement.parentElement
+                lineTotal = parentNode.querySelector('.line-total')
+                quantity = parseInt(event.target.value)
+                medicineId = parseInt(parentNode.querySelector('input[name="medicine-ids"]').value)
+                unitPrice = parseFloat(parentNode.querySelector('input[name="medicine-unit-prices"]').value)
+                lineTotal.textContent = new Intl.NumberFormat().format(quantity*unitPrice)
+                updateTotal()
+
+                inputWrapperNode = event.currentTarget.parentElement;
+                inputWrapperNode.classList.add('was-validated')
+                errorsWrapperElement = inputWrapperNode.getElementsByClassName('invalid-feedback')
+                inputNode = event.currentTarget
+                if (! errorsWrapperElement.length){
+                    errorsWrapperElement = document.createElement('div')
+                    errorsWrapperElement.classList = 'invalid-feedback mt-1'
+                    inputWrapperNode.append(errorsWrapperElement)
+                }
+                else {
+                    errorsWrapperElement = errorsWrapperElement[0]
+                }
+                validate_chain = [ validate_require, validate_gt_zero, validate_medicine_quantity("{% url 'api:medicine_quantity_validation' 0 %}".replace('0', medicineId))]
+                const handle_validate = (errorString) =>{
+                    if  (errorString != '')
+                    {
+                        inputNode.classList.add('is-invalid')
+                        inputNode.classList.remove('is-valid')
+                        errorsWrapperElement.innerHTML = errorString
+                        inputNode.setCustomValidity(errorString)
+                        return false;
+                    }
+                    else{
+                        inputNode.classList.remove('is-invalid')
+                        inputNode.classList.add('is-valid')
+                        errorsWrapperElement.innerHTML = ''
+                        inputNode.setCustomValidity('')
+                        return true
+                    }
+                }
+                for(i=0;i<validate_chain.length; i++)
+                {
+                    console.log(event.target.value)
+                    console.log(quantity)
+                    result = await validate_chain[i](event.target.value, handle_validate)
+                    if (! result)
+                    { break ;}
+                    
+                    // if  (errorString)
+                    // {
+                    //     event.currentTarget.classList.add('is-invalid')
+                    //     event.currentTarget.classList.remove('is-valid')
+                    //     errorsWrapperElement.innerHTML = errorString
+                    //     event.currentTarget.setCustomValidity(errorString)
+                    //     break;
+                    // }
+                    // else{
+                    //     event.currentTarget.classList.remove('is-invalid')
+                    //     event.currentTarget.classList.add('is-valid')
+                    //     errorsWrapperElement.innerHTML = ''
+                    //     event.currentTarget.setCustomValidity('')
+
+                    // }
+                }
+
+            }
+            catch(error){
+                console.log(error)
+            }
+        })
+
+
+        
+
+        unitPriceDiv = document.createElement('div')
+        unitPriceDiv.className = 'col-3'
+        unitPriceDiv.append(medicineUnitPriceInput)
+
+        quantiyDiv = document.createElement('div')
+        quantiyDiv.className = 'col-2'
+        quantiyDiv.append(quantityInput)
+        
+
+        unitDiv = document.createElement('div')
+        unitDiv.className = 'col-1'
+        unitDiv.textContent = medicine.unit
+
+        lineTotalDiv = document.createElement('div')
+        lineTotalDiv.className = 'col-2 line-total'
+        lineTotalDiv.textContent = new Intl.NumberFormat().format(quantityInput.value * medicineUnitPriceInput.value)
+
+        deleteDiv = document.createElement('div')
+        deleteDiv.className = 'col-1'
+        deleteDiv.innerHTML = '<i class="fa-solid fa-trash"></i>'
+        deleteDiv.style.cursor = 'pointer'
+        deleteDiv.addEventListener('click', (event) => {
+            event.currentTarget.parentNode.remove()
+            updateTotal()
+
+        })
+
+        preDiv.append(medicineIdInput)
+        preDiv.append(medicineNameDiv)
+        preDiv.append(unitPriceDiv)
+        preDiv.append(quantiyDiv)
+        preDiv.append(unitDiv)
+        preDiv.append(lineTotalDiv)
+        preDiv.append(deleteDiv)
+
+        return preDiv
+    }
+
+    const chooseMedicine =async () => {
+        var selectedItem = [...document.querySelectorAll("#medicine-select option:checked")].map(element => element.value)
+        
+        console.log(selectedItem)
+        invoiceDiv = document.getElementById('invoice-detail-list')
+        medicineList = await Promise.all(selectedItem.map(async element => {
+            const response = await fetch("{% url 'api:medicine_detail' 0 %}".replace('0', element))
+            console.log(response)
+            const data = await response.json()
+            console.log(data)
+            return  data
+        }))
+        invoiceMedicineList = [...document.querySelectorAll('input[name="medicine-ids"]')].map(element => element.value)
+        if (invoiceMedicineList.length == 0){
+            medicineList.forEach(element => {
+                element['quantity'] = 1
+                var preDiv = createMedicineDiv(element)
+                
+                invoiceDiv.append(preDiv)
+            });
+        }
+        else{
+            medicineList.forEach(element => {
+                if (! invoiceMedicineList.includes(element.id.toString())){
+                    element['quantity'] = 1
+                    var preDiv = createMedicineDiv(element)
+                    
+                    invoiceDiv.append(preDiv)
+                }
+            })
+            
+        }
+
+
+
+        var medicineModal = bootstrap.Modal.getInstance(document.getElementById("medicine-tab"))
+        medicineModal.hide()        
+        updateTotal()
+
+    }
+    const validate_gt_number = ( numb )=> {
+        return (value, handle) =>{
+            errorString = ''
+            if (value <= numb)
+            errorString = 'Must be greater than ' + numb
+            return handle(errorString)
+
+        }
+    }
+    const validate_gt_zero = validate_gt_number(0)
+    const validate_require = (value, handle)=>{
+        errorString = ''
+        if (! value)
+            errorString = 'This field is required'
+        return handle(errorString)
+    }
+    const validate_medicine_quantity = (url)=>{
+        return async (value, handle)=>{
+            formData = new FormData(document.getElementById("invoice-form"))
+            formData.append('quantity', value)
+            result = await fetch(url, {
+                method: 'POST',
+                body: formData
+            }).then(res => res.json())
+            .then(data =>handle(data['errors']) )
+            .catch(error => console.log(error))
+            return result
+        }
+    }
+    
+    const updateTotal = () => {
+        detailItems = [...document.querySelectorAll('.invoice-detail')]
+        if (detailItems.length <= 0)
+        {
+            document.getElementById('invoice-total').textContent = 0
+            return 
+        }
+        var total = detailItems.reduce( (accumulator, element) => {
+            try{
+                quantity = parseInt(element.querySelector('input[name="medicine-quantities"]').value)
+                unitPrice = parseFloat(element.querySelector('input[name="medicine-unit-prices"]').value) 
+                console.log(`quan: ${quantity}, unit price: ${unitPrice}`)
+                return accumulator +  quantity * unitPrice
+            }
+            catch(error){
+                console.log(error)
+            }
+        }, 0)
+        document.getElementById('invoice-total').textContent = new Intl.NumberFormat().format(total)
+    }
+
+    
+    (function() {
+        var details = []
+        {% for detail in details %}
+            details.push(createMedicineDiv({
+                'id': '{{ detail.medicine.id }}', 
+                'name': '{{ detail.medicine.name }}',
+                'quantity': '{{ detail.quantity }}',
+                'unit': '{{ detail.medicine.unit }}',
+                'sale_price': '{{ detail.unit_price }}'.replace(',', '')
+            }))
+        {% endfor %}
+
+        invoiceDiv = document.getElementById('invoice-detail-list')
+        details.forEach(element =>{
+            invoiceDiv.append(element)
+        })
+        updateTotal()
+
+
+    })();
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll('.needs-validation')
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+        }, false)
+
+  })
+
+</script>
+{% endblock %}

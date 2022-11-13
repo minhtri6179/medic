@@ -1,0 +1,174 @@
+{% extends "base.html" %} {% block content %}
+<div>
+  <div class="container d-flex justify-content-center">
+    <div class="card ml-8 w-100 p-3">
+      <div class="card-header">
+        <h3 class="text-center">DOCTOR HOME PAGE</h3>
+      </div>
+      <div class="card-body">
+        <div class="container d-flex justify-content-between">
+          <form action="{% url 'prescribing_management:doctor_index' %}">
+            <label for="search"></label>
+            <input
+              type="text"
+              name="q"
+              id="q"
+              size="15"
+              style="border: 0; border-bottom: 1px solid black; outline: 0"
+              placeholder="Search doctor"
+              value="{{request.GET.q}}"
+            />
+            <button type="submit" class="btn btn-black btn-sm">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-search"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+                ></path>
+              </svg>
+            </button>
+          </form>
+          <div class="d-inline p-2 bg-secondary text-white">
+            Make Appointment<a
+              href="{% url 'prescribing_management:make_appointment' %}"
+              class="btn btn-info btn-link"
+            >
+              <i
+                class="fa-solid fa-gavel"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                data-bs-title="Make Appointment"
+              ></i>
+            </a>
+          </div>
+        </div>
+        <table class="table table-striped">
+          <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Specialize</th>
+            <th>Expentise</th>
+            <th>specialist</th>
+            <th>Actions</th>
+          </thead>
+          <tbody>
+            {% for doctor in doctors %}
+            <tr id="doctor{{doctor.id}}">
+              <td class="col-1">{{ doctor.id }}</td>
+              <td class="col-2">
+                <a
+                  class="btn btn-primary btn-link btn-sm"
+                  data-bs-toggle="collapse"
+                  href="#doctor-{{ doctor.id }}"
+                  role="button"
+                  aria-expanded="false"
+                  aria-controls="doctor-{{doctor.id}}"
+                >
+                  {{ doctor.user.name }}
+                </a>
+                <div class="collapse" id="doctor-{{ doctor.id }}">
+                  <p>Gender: {{ doctor.user.gender }}</p>
+                  <p>Address: {{ doctor.user.address }}</p>
+                  <p>Phone: {{ doctor.user.phone }}</p>
+                </div>
+              </td>
+              <td class="col-2">{{ doctor.specialize }}</td>
+              <td class="col-2">{{ doctor.expertise }}</td>
+              <td class="col-3">{{ doctor.specialist }}</td>
+              <td class="col-2">
+                {% comment %}
+                <a
+                  href="{% url 'prescribing_management:make_appointment' doctor.user.id %}"
+                  class="btn btn-info btn-link"
+                >
+                  <i
+                    class="fa-solid fa-gavel"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    data-bs-title="Make Appointment"
+                  ></i>
+                </a>
+                {% endcomment %} {% if request.user.role == 'assistance' %}
+                <a
+                  href=""
+                  class="btn btn-link"
+                  data-bs-toggle="modal"
+                  onclick="deleteData('{{ doctor.user.id }}')"
+                >
+                  <i
+                    class="fa-solid fa-trash"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    data-bs-title="Delete"
+                  ></i>
+                </a>
+                <a
+                  href="{% url 'prescribing_management:doctor_edit' doctor.user.id %}"
+                  class="btn btn-info btn-link"
+                >
+                  <i
+                    class="fa-solid fa-wrench"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    data-bs-title="Edit"
+                  ></i>
+                </a>
+                {% endif %}
+              </td>
+            </tr>
+
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="modal" id="deleteConfirmation" tabindex="-1">
+          <div class="modal-dialog">
+            <form method="post" id="delete-form" class="modal-content">
+              {% csrf_token %}
+              <div class="modal-header">
+                <h5 class="modal-title">Delete confirmation</h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <p>Are you sure to delete this item?</p>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button type="submit" class="btn btn-primary">Confirm</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div id="info-space"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block script %}
+<script>
+  const deleteData = (id) => {
+    const deleteConfirmation = document.getElementById("deleteConfirmation");
+    var myModal = new bootstrap.Modal(deleteConfirmation);
+    myModal.toggle();
+    var deleteForm = document.getElementById("delete-form");
+    deleteForm.action =
+      "{% url 'prescribing_management:doctor_delete' 0%}".replace("0", id);
+  };
+</script>
+{% endblock %}

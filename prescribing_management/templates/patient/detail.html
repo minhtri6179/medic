@@ -1,0 +1,265 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="container d-flex justify-content-center">
+  <div class="card ml-8 w-100 p-3">
+    <div class="card-header">
+      <h3 class="text-center">PATIENT DETAIL</h3>
+    </div>
+    <div class="card-body">
+      <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+          <button
+            class="nav-link active"
+            id="nav-home-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#nav-home"
+            type="button"
+            role="tab"
+            aria-controls="nav-home"
+            aria-selected="true"
+          >
+            GENERAL INFORMATION
+          </button>
+          <button
+            class="nav-link"
+            id="nav-profile-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#nav-profile"
+            type="button"
+            role="tab"
+            aria-controls="nav-profile"
+            aria-selected="false"
+          >
+            PRESCRIPTION HISTORY
+          </button>
+          <button
+            class="nav-link"
+            id="nav-contact-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#nav-contact"
+            type="button"
+            role="tab"
+            aria-controls="nav-contact"
+            aria-selected="false"
+          >
+            INVOICE HISTORY
+          </button>
+        </div>
+      </nav>
+      <div class="tab-content" id="nav-tabContent">
+        <div
+          class="tab-pane fade show active"
+          id="nav-home"
+          role="tabpanel"
+          aria-labelledby="nav-home-tab"
+        >
+          <div class="p-3">
+            <h1>This is patient with id {{ patient.id }}</h1>
+            <div><b>Patient name:</b> {{ patient.name }}</div>
+            <div><b>Age: </b> {{ patient.age }}</div>
+            <div><b>Gender: </b> {{ patient.gender }}</div>
+            {% if patient.doctor %}
+            <div><b>Doctor: </b> {{ patient.doctor }}</div>
+            {% endif %} {% if patient.address %}
+            <div><b>Address: </b> {{ patient.address }}</div>
+            {% endif %}
+          </div>
+        </div>
+        <div
+          class="tab-pane fade"
+          id="nav-profile"
+          role="tabpanel"
+          aria-labelledby="nav-profile-tab"
+        >
+          <div class="p-3">
+            <div>
+              <b
+                >Total number of prescription of this patient: {{
+                patient.prescription_set.count }}</b
+              >
+            </div>
+            <table class="table">
+              <thead>
+                <th>ID</th>
+                <th>Diagnosis</th>
+                <th>Date</th>
+              </thead>
+              <tbody>
+                {% for pres in patient.prescription_set.all %}
+
+                <tr>
+                  <td class="col-1">{{ pres.id }}</td>
+                  <td class="col-5">
+                    <a
+                      class="btn btn-primary btn-link btn-sm"
+                      data-bs-toggle="collapse"
+                      href="#prescription-{{ pres.id }}"
+                      role="button"
+                      aria-expanded="false"
+                      aria-controls="collapseExample"
+                    >
+                      {{ pres.diagnosis }}
+                    </a>
+                    <div class="collapse" id="prescription-{{ pres.id }}">
+                      <div class="card card-body">
+                        <table class="table">
+                          <thead>
+                            <th>Medicine</th>
+                            <th>Usage</th>
+                            <th>Amount</th>
+                          </thead>
+                          <tbody>
+                            {% for detail in pres.prescriptiondetail_set.all %}
+                            <tr>
+                              <td>{{ detail.medicine }}</td>
+                              <td>{{ detail.usage }}</td>
+                              <td>
+                                {{ detail.number }} {{ detail.medicine.unit }}
+                              </td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="col-1">{{ pres.created_at|date:'d/m/Y' }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div
+          class="tab-pane fade"
+          id="nav-contact"
+          role="tabpanel"
+          aria-labelledby="nav-contact-tab"
+        >
+          <div class="p-3">
+            <div>
+              <b
+                >Total number of invoice of this patient: {{
+                patient.invoice_set.count }}</b
+              >
+            </div>
+            <table class="table">
+              <thead>
+                <th>ID</th>
+                <th>Details</th>
+                <th>Date</th>
+                <th>Total</th>
+              </thead>
+              <tbody>
+                {% for invoice in patient.invoice_set.all %}
+
+                <tr>
+                  <td class="col-1">{{ invoice.id }}</td>
+                  <td class="col-5">
+                    <a
+                      class="btn btn-primary btn-link btn-sm"
+                      data-bs-toggle="collapse"
+                      href="#invoice-{{invoice.id}}"
+                      role="button"
+                      aria-expanded="false"
+                      aria-controls="invoice-{{invoice.id}}"
+                    >
+                      Detail
+                    </a>
+                    <div class="collapse" id="invoice-{{invoice.id}}">
+                      <div class="card card-body">
+                        <table class="table">
+                          <thead>
+                            <th>Medicine</th>
+                            <th>Quantity</th>
+                            <th>Unit price</th>
+                            <th>Line total</th>
+                          </thead>
+                          <tbody>
+                            {% for detail in invoice.invoicedetail_set.all %}
+                            <tr>
+                              <td>{{ detail.medicine }}</td>
+                              <td>
+                                {{ detail.quantity }} {{ detail.medicine.unit }}
+                              </td>
+                              <td>{{ detail.unit_price }}</td>
+                              <td>{{ detail.line_total }}</td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="col-1">{{ invoice.created_at|date:'d/m/Y' }}</td>
+                  <td class="col-1">{{ invoice.total }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <a
+        href="{% url 'prescribing_management:patient_edit' patient.id %}"
+        class="btn btn-primary btn-sm"
+      >
+        EDIT</a
+      >
+      <a
+        href=""
+        class="btn btn-danger btn-sm"
+        data-bs-toggle="modal"
+        onclick="deleteData('{{ patient.id }}')"
+      >
+        DELETE</a
+      >
+      <a
+        href="{% url 'prescribing_management:prescription_create' %}?patient={{patient.id}}"
+        class="btn btn-info btn-sm"
+        >CREATE NEW PRESCRIPTION</a
+      >
+      <button class="btn btn-info btn-sm">CREATE NEW INVOICE</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="deleteConfirmation" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="post" id="delete-form" class="modal-content">
+      {% csrf_token %}
+      <div class="modal-header">
+        <h5 class="modal-title">Delete confirmation</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure to delete this item?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary">Confirm</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %} {% block script %}
+<script>
+  const deleteData = (id) => {
+    const deleteConfirmation = document.getElementById("deleteConfirmation");
+    var myModal = new bootstrap.Modal(deleteConfirmation);
+    myModal.toggle();
+
+    var deleteForm = document.getElementById("delete-form");
+    deleteForm.action =
+      "{% url 'prescribing_management:patient_delete' 0%}".replace("0", id);
+  };
+</script>
+{% endblock %}

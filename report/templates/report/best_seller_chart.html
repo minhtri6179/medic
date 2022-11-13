@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form action="">
+        <select name="report" id="report-type">
+            <option value="general"><a href="{% url 'report:general' %}">Aggregate report</a> </option>
+            <option value="revenue-chart"><a href="{% url 'report:revenue_chart' %}">Revenue chart</a> </option>
+            <option value="invoice-detail"><a href="{% url 'report:invoice' %}">Medicine revenue</a> </option>
+            <option value="most-used-medicine">Most used medicine</option>
+        </select>
+        <select name="by" id="">
+            <option value="date">By date</option>
+            <option value="month">By month</option>
+            <option value="year">By year</option>
+        </select>
+        <input type="date" name="from">
+        <input type="date" name="to">
+        <input type="submit">
+    </form>
+    <div> this is the charts</div>
+    <canvas id="revenueChart" width="400" height="400"></canvas>
+    {% endblock %}
+
+
+{% block script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        let chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Revenue',
+                    fill: true,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1,
+                    data: [
+                        {% for row in data %}
+                            {
+                            x: '{{row.created_at__date|date:"Y-m-d"}} 00:00:00',
+                            y: {{row.total}}
+                            },
+                        {% endfor %}
+                    ]
+                }],
+            },
+            options: {
+                scales: {
+                    x: {
+                        min: '{{min|date:"Y-m-d"}} 00:00:00',
+                        // max: '{{max|date:"Y-m-d"}} 00:00:00',
+                        // min: '2022-09-01 00:00:00',
+                    }
+                }
+            }
+        });
+    </script>
+        
+{% endblock %}

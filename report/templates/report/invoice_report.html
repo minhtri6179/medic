@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form action="{% url 'report:general' %}">
+        <select name="report" id="report-type">
+            <option value="general">Aggregate report</option>
+            <option value="revenue-chart">Revenue chart</option>
+            <option value="invoice-detail">Medicine revenue</option>
+            <option value="most-used-medicine">Most used medicine</option>
+        </select>
+        <select name="by" id="">
+            <option value="date">By date</option>
+            <option value="month">By month</option>
+            <option value="year">By year</option>
+        </select>
+        <input type="date" name="from">
+        <input type="date" name="to">
+        <input type="submit">
+    </form>
+    <table class="table">
+        <thead>
+            <th>Medicine ID</th>
+            <th>Medicine name</th>
+            <th>Unit</th>
+            <th>Amount</th>
+            <th>Total</th>
+        </thead>
+        <tbody>
+            {% for med in data %}
+            <tr>
+                <td>{{med.medicine__id}}</td>
+                <td>{{med.medicine__name}}</td>
+                <td>{{med.medicine__unit}}</td>
+                <td>{{med.count}}</td>
+                <td>{{med.total | floatformat:"0"}} VNĐ</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

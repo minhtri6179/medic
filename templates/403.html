@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>403 Forbidden</h1>
+<p>{{ exception }}</p>
+<p><a {% if request.META.HTTP_REFERER %} 
+    href="{% url 'login' %}?next={{ request.META.HTTP_REFERER}}"
+    {% else %}
+    hreflang="{% url 'login' %}"
+    {% endif %}>LOGIN HERE</a></p>
+{% endblock %}

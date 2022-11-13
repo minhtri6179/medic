@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}  
+   
+        <div class="container">
+
+          <!--Simple Form-->
+          <h2 class="my-4">Upload Medicine with csv file</h2>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+                <input type="file" name="upload" accept="csv/*">
+                <br>
+                <button class="btn btn-dark my-4" type="submit">Submit</button>
+          </form>
+
+          <!--See Image Uploaded-->
+          <h2 class="my-4">CSV File Uploaded</h2>
+          <div class="row">
+            {% if file_url %}
+            <div class="col-lg-4 col-md-6 col-sm-12 pb-4">
+              <img src="{{ file_url }}" class="img-fluid">
+              <br>
+              <a class="btn btn-dark my-4" href="/medicine">Return to Medicine List</a>
+            {% else %}
+            <div>
+               
+            <p>No csv file upload.</p>
+            <a class="btn btn-dark my-4" href="/medicine">Return to Medicine List</a>
+            {% endif %}
+          </div>
+
+        </div>
+    
+
+{% endblock %}

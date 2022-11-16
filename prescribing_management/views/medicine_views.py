@@ -163,15 +163,18 @@ def upload(request):
         file_url = fss.url(file)
         file_url = 'static'+file_url
         ArticleFormSet = formset_factory(Medicine, formset=MedicineCreateForm)
-        respone = {
-            'status': True,
+        flag = True
+        response = {
+            'status': flag,
             'image_url': '',
-            'message': 'File upload success'
+            'message': 'File Uploaded Successfully'
         }
         with open(file_url, 'r') as csvfile:
             csvreader = csv.reader(csvfile)
             for row in csvreader:
-
+                if len(row) != 8:
+                    flag = False
+                    break
                 m_type = MedicineType.objects.filter(
                     name=row[7]).values_list('id', flat=True)
                 if len(m_type) == 0:
@@ -193,13 +196,15 @@ def upload(request):
                 }
                 formset = ArticleFormSet(d)
                 if formset.is_valid() == False:
-                    respone = {
-                        'status': False,
-                        'image_url': '',
-                        'message': 'Upload file failed'
-                    }
+                    flag = False
+                    break
                 if formset.is_valid():
                     formset.save()
-
-        return render(request, 'medicine/upload.html', {'respone': respone})
+        if flag is False:
+            response = {
+                'status': flag,
+                'image_url': '',
+                'message': 'File Upload Failed'
+            }
+        return render(request, 'medicine/upload.html', {'response': response})
     return render(request, 'medicine/upload.html')

@@ -1,33 +1,29 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
 
-{% block content %}  
-   
-        <div class="container">
+<div class="container">
+  <!--Simple Form-->
+  <h2 class="my-5">Upload patients with csv file</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="upload_patient" accept="csv/*" />
+    <br />
+    <button class="btn btn-dark my-4" type="submit">Submit</button>
+  </form>
 
-          <!--Simple Form-->
-          <h2 class="my-4">Upload patients with csv file</h2>
-          <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-                <input type="file" name="upload_patient" accept="csv/*">
-                <br>
-                <button class="btn btn-dark my-4" type="submit">Submit</button>
-          </form>
+  <!--See Image Uploaded-->
+  <h2 class="my-5">CSV File Uploaded</h2>
+  <div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 pb-4">
+      <div>
+        {% if response.status == False %}
+        <h2 style="color: red">{{response.message}}</h2>
+        {% else %}
+        <h2 style="color: green">{{response.message}}</h2>
+        {% endif %}
+        <a class="btn btn-dark my-5" href="/patient">Return to Patient List</a>
+      </div>
+    </div>
 
-          <!--See Image Uploaded-->
-          <h2 class="my-4">CSV File Uploaded</h2>
-          <div class="row">
-            {% if respone.status == False %}
-            <div class="col-lg-4 col-md-6 col-sm-12 pb-4">
-              <a class="btn btn-dark my-4" href='/'>{{response.message}}</a>
-            {% else %}
-            <div>
-               
-            <p>No csv file upload.</p>
-            <a class="btn btn-dark my-4" href="/patient">Return to Patient List</a>
-            {% endif %}
-          </div>
-
-        </div>
-    
-
-{% endblock %}
+    {% endblock %}
+  </div>
+</div>

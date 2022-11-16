@@ -1,5 +1,5 @@
 # base image  
-FROM python:3.10   
+FROM --platform=linux/amd64 python:3.10   
 
 WORKDIR /code
 # set environment variables  

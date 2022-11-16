@@ -20,20 +20,14 @@ class ReportService:
             field, 0) for field in x.keys()} for x in invoice}
         prescription_dict = {x['created_at__date']: {field: x.get(
             field, 0) for field in x.keys()} for x in prescription}
-        print(invoice_dict)
-        print(prescription_dict)
         data = defaultdict(lambda: {'invoice_count': 0,
                                     'prescription_count': 0,
                                     'total': 0})
         for key in invoice_dict:
-            print(key)
             for field in invoice_dict[key]:
-                print(field)
                 data[key][field] = invoice_dict[key][field]
         for key in prescription_dict:
-            print(key)
             for field in prescription_dict[key]:
-                print(field)
                 data[key][field] = prescription_dict[key][field]
 
         return list(data.values())

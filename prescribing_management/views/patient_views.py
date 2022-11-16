@@ -113,36 +113,39 @@ def PatientUpload(request):
         file_url = 'static'+file_url
         ArticleFormSet = formset_factory(
             Patient, formset=PatientCreateUpdateForm)
-        respone = {
-            'status': True,
+        flag = True
+        response = {
+            'status': flag,
             'image_url': '',
-            'message': 'File upload success'
+            'message': 'File Uploaded Successfully'
         }
         with open(file_url, 'r') as csvfile:
             csvreader = csv.reader(csvfile)
             for row in csvreader:
-                d = {
-                    'name': row[0],
-                    'age': row[1],
-                    'phone': row[2],
-                    'gender': row[3],
-                    'address': row[4],
-                    'height': row[5],
-                    'weight': row[6],
-                    'temperature': row[7],
-                    'blood_pressure': row[8],
-                    'heart_rate': row[9],
-                    'doctor': row[10],
-                }
-                formset = ArticleFormSet(d)
-                if formset.is_valid() == False:
-                    respone = {
-                        'status': False,
-                        'image_url': '',
-                        'message': 'Upload file failed'
+                if len(row) == 12:
+                    d = {
+                        'name': row[0],
+                        'age': row[1],
+                        'phone': row[2],
+                        'gender': row[3],
+                        'address': row[4],
+                        'height': row[5],
+                        'weight': row[6],
+                        'temperature': row[7],
+                        'blood_pressure': row[8],
+                        'heart_rate': row[9],
+                        'doctor': row[10],
                     }
-                if formset.is_valid():
-                    formset.save()
+                    formset = ArticleFormSet(d)
+                    if formset.is_valid() == False:
+                        flag = False
+                        break
+                    if formset.is_valid():
+                        formset.save()
+                else:
+                    flag = False
+                    break
+
         import glob
 
         files = glob.glob('static/media/*')
@@ -150,8 +153,14 @@ def PatientUpload(request):
         print(file_url)
         for f in files:
             os.remove(f)
-
-        return render(request, 'patient/upload.html', {'respone': respone})
+        if flag is False:
+            response = {
+                'status': flag,
+                'image_url': '',
+                'message': 'File Upload Failed'
+            }
+        print(response)
+        return render(request, 'patient/upload.html', {'response': response})
     return render(request, 'patient/upload.html')
 
 

@@ -64,6 +64,8 @@
                                         data-bs-toggle="tooltip" data-bs-placement="top"
                                         data-bs-title="Info"></i>
                                     </a>
+
+                                    {% if request.user.role == 'assistance' %}
                                     <a href="{% url 'prescribing_management:patient_edit' patient.id %}" 
                                     class="btn btn-primary btn-link">
                                         <i class="fa-solid fa-pen-to-square"
@@ -79,6 +81,7 @@
                                         data-bs-placement="top"
                                         data-bs-title="Delete"></i>
                                     </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                             

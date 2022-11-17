@@ -178,7 +178,6 @@ def upload(request):
                 m_type = MedicineType.objects.filter(
                     name=row[7]).values_list('id', flat=True)
                 if len(m_type) == 0:
-                    print("Type not found, add type to MedicineType....")
                     medicine_type = MedicineType(name=row[7])
                     medicine_type.save()
                     m_type = MedicineType.objects.filter(

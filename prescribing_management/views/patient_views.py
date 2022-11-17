@@ -149,8 +149,7 @@ def PatientUpload(request):
         import glob
 
         files = glob.glob('static/media/*')
-        print(files)
-        print(file_url)
+
         for f in files:
             os.remove(f)
         if flag is False:
@@ -159,13 +158,11 @@ def PatientUpload(request):
                 'image_url': '',
                 'message': 'File Upload Failed'
             }
-        print(response)
         return render(request, 'patient/upload.html', {'response': response})
     return render(request, 'patient/upload.html')
 
 
 def PatientExport(request):
-    print("export comming!!!!")
     dataset = PatientResource().export()
     csv_raw = dataset.csv
     txts = csv_raw.split(',')

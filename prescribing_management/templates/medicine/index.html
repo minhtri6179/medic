@@ -48,7 +48,9 @@
                         <th>Stock quantity</th>
                         <th>Sale price</th>
                         <th>Medicine type</th>
+                        {% if request.user.role == 'assistance' %}
                         <th>Actions</th>
+                        {% endif %}
                     </thead>
                     <tbody>
                         {% for medicine in medicine_list %}
@@ -59,6 +61,7 @@
                                 <td>{{ medicine.stock_quantity }}</td>
                                 <td>{{ medicine.sale_price }}</td>
                                 <td>{{ medicine.medicine_type }}</td>
+                                {% if request.user.role == 'assistance' %}
                                 <td>
                                     <a href="{% url 'prescribing_management:medicine_edit' medicine.id %}" 
                                     class="btn btn-primary btn-link">
@@ -75,6 +78,7 @@
                                     </a>
                                     <!-- <div onclick="deleteData('{{ medicine.id }}')">Delete</div> -->
                                 </td>
+                                {% endif %}
                             </tr>
                             
                         {% endfor %}

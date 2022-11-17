@@ -36,7 +36,6 @@ class NotiDoneView(LoginRequiredView, RoleRequiredMixin, UpdateView):
     model = Schedule
     fields = ['status']
     template_name: str = 'doctor/schedule_form.html'
-    print(model)
 
     def get_success_url(self) -> str:
         messages.success(self.request, 'This Appointment is done')

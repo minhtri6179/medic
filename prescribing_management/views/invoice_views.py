@@ -46,13 +46,10 @@ class InvoiceDetailView(RoleRequiredMixin, View):
     def post(self, request, pk):
         invoice = Invoice.objects.get(pk=pk)
         form = InvoiceCreateOrEditForm(request.POST, instance=invoice)
-        print(request.POST)
         medicine_ids = request.POST.getlist('medicine-ids')
         medicine_quantities = request.POST.getlist('medicine-quantities')
         medicine_prices = request.POST.getlist('medicine-unit-prices')
-        print(medicine_ids)
-        print(medicine_quantities)
-        print(medicine_prices)
+
         service = InvoiceService()
         if service.edit_invoice_and_detail(form, medicine_ids=medicine_ids, medicine_quantities=medicine_quantities, medicine_prices=medicine_prices):
 
@@ -135,13 +132,9 @@ class InvoiceEditView(RoleRequiredMixin, View):
     def post(self, request, pk):
         invoice = Invoice.objects.get(pk=pk)
         form = InvoiceCreateOrEditForm(request.POST, instance=invoice)
-        print(request.POST)
         medicine_ids = request.POST.getlist('medicine-ids')
         medicine_quantities = request.POST.getlist('medicine-quantities')
         medicine_prices = request.POST.getlist('medicine-unit-prices')
-        print(medicine_ids)
-        print(medicine_quantities)
-        print(medicine_prices)
         service = InvoiceService()
         if service.edit_invoice_and_detail(form, medicine_ids=medicine_ids, medicine_quantities=medicine_quantities, medicine_prices=medicine_prices):
 

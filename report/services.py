@@ -41,10 +41,10 @@ class ReportService:
         return medicine
 
     def get_medicine_bestseller(self, from_date_range=datetime.now(), to_date_range=datetime.now()):
-        medicine = InvoiceDetail.objects\
+        invoice = InvoiceDetail.objects\
             .filter(invoice__created_at__date__gte=from_date_range, invoice__created_at__date__lte=to_date_range)\
-            .values('medicine')\
-            .annotate(total=Sum('line_total'), count=Count('medicine'))\
-            .values('medicine__id', 'medicine__name', 'medicine__unit', 'total', 'count')
-        print(medicine)
-        return medicine
+            .values('medicine__name')\
+            .annotate(count=Sum('quantity'))\
+            .order_by('-count')
+
+        return list(invoice)

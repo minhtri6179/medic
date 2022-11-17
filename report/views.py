@@ -70,7 +70,6 @@ class GeneralReportView(View):
             'value_data': value_data,
             'label': label
         }
-        print(context)
         return render(request, 'report/general_report.html', context)
 
 
@@ -82,10 +81,14 @@ class MedicineBestseller(View):
         to_date_range = datetime.strptime(
             request.GET.get('to', now), '%Y-%m-%d')
         data = ReportService().get_medicine_bestseller(from_date_range, to_date_range)
+        names = []
+        value_counts = []
+        for medicine in data:
+            names.append(medicine['medicine__name'])
+            value_counts.append(medicine['count'])
         context = {
-            'data': data,
-            'min': from_date_range,
-            'max': to_date_range
+            'names': names,
+            'value_counts': value_counts,
         }
         return render(request, 'report/best_seller_chart.html', context)
 

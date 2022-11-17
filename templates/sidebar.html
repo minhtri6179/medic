@@ -70,10 +70,10 @@
         <h5>PAYMENT</h5>
       </a>
     </li>
-    {% endcomment %} {% url 'report:general' as report_url %}
+    {% endcomment %} {% url 'report:revenue' as report_url %}
 
     <li class="{% if report_url in request.path %}active{% endif %}">
-      <a href="{% url 'report:general' %}">
+      <a href="{% url 'report:revenue' %}">
         <i class="tim-icons icon-puzzle-10"></i>
         <h5>Report</h5>
       </a>

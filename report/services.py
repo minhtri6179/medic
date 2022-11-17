@@ -32,17 +32,19 @@ class ReportService:
 
         return list(data.values())
 
-    def get_revenue_data(self, from_date_range=datetime.now(), to_date_range=datetime.now()):
-        invoice = Invoice.objects.filter(created_at__date__gte=from_date_range, created_at__date__lte=to_date_range)\
-            .values('created_at__date')\
-            .annotate(total=Sum('total')).annotate(invoice_count=Count('id'))\
-            .values('created_at__date', 'invoice_count', 'total')
-        return invoice
-
     def get_invoice_detail(self, from_date_range=datetime.now(), to_date_range=datetime.now()):
         medicine = InvoiceDetail.objects\
             .filter(invoice__created_at__date__gte=from_date_range, invoice__created_at__date__lte=to_date_range)\
             .values('medicine')\
             .annotate(total=Sum('line_total'), count=Count('medicine'))\
             .values('medicine__id', 'medicine__name', 'medicine__unit', 'total', 'count')
+        return medicine
+
+    def get_medicine_bestseller(self, from_date_range=datetime.now(), to_date_range=datetime.now()):
+        medicine = InvoiceDetail.objects\
+            .filter(invoice__created_at__date__gte=from_date_range, invoice__created_at__date__lte=to_date_range)\
+            .values('medicine')\
+            .annotate(total=Sum('line_total'), count=Count('medicine'))\
+            .values('medicine__id', 'medicine__name', 'medicine__unit', 'total', 'count')
+        print(medicine)
         return medicine

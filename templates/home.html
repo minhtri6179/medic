@@ -4,23 +4,42 @@
 <div class="container d-flex justify-content-center">
   <div class="card ml-8 w-100 p-3">
     <div class="card-header">
-      <h3 class="text-center">This is the home page</h3>
+      <div class = 'text-right'>
+        {% if user.is_authenticated %} Hi {{ user.name }}! I have {{user.role}} role
+          <p><a href="{% url 'logout' %}">Log Out</a></p>
+        {% else %}
+          <p>
+            You are not logged in <a href="{% url 'login' %}">Log In</a>
+          </p>
+          
+        {% endif %}
+      </div>
+      
     </div>
-    <div>
+    <div class = 'card-body'>
+      <h3 class="text-center">This is the home page</h3>
       <img
         src="https://cache.clinic.co/assets/img/logo.png"
         class="mx-auto d-block"
         weight="100"
         height="100"
       />
+      
     </div>
 
-    {% if user.is_authenticated %} Hi {{ user.name }}! I have {{user.role}} role
-    <p><a href="{% url 'logout' %}">Log Out</a></p>
-    {% else %}
-    <p>You are not logged in</p>
-    <a href="{% url 'login' %}">Log In</a>
-    {% endif %}
+    <div class = 'card-footer'>
+      <div class = 'card ml-4 w-100 p-3 bg-4'>
+        {%if user.is_authenticated%}
+          <div class = 'card-body'>
+            <div>ID: {{user.username}}</div>
+            <div>Name: {{user.name}}</div>
+            {% if user.phone != None%}
+              <div>Phone: {{user.phone}}</div>
+            {%endif%}
+          </div>
+        {%endif%}
+      </div>
+    </div>
   </div>
 </div>
 

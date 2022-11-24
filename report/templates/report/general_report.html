@@ -1,48 +1,52 @@
 {% extends 'base.html' %} {% block content %}
-<form action="{% url 'report:redirect' %}">
-  <select name="report" id="report-type">
-    <option value="revenue-chart">Revenue chart</option>
-    <option value="most-used-medicine">Most used medicine</option>
-    {% comment %}
-    <option value="revenue-and-profit">Revenue and Profit</option>
-    {% endcomment %}
-  </select>
-  <select name="by" id="by-time">
-    <option value="date">By date</option>
-    <option value="month">By month</option>
-  </select>
-  <input type="date" name="from" required />
-  <input type="date" name="to" required />
-  <input type="submit" />
-</form>
 
-<canvas id="myChart" width="800" height="400"></canvas>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  const ctx = document.getElementById('myChart').getContext('2d');
-  const myChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels : [{% for item in time_data %}"{{ item }}",{% endfor %}],
-          datasets: [{
-            label: "{{ label }}",
-            data : [{% for item in value_data %}{{ item }},{% endfor %}],
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)'
-          }]
-        },
+<div class= 'card ml-8 w-100 p-3'>
+  <h2 class = 'text-center'>Report</h2>
+  <form action="{% url 'report:redirect' %}">
+    <select name="report" id="report-type">
+      <option value="revenue-chart">Revenue chart</option>
+      <option value="most-used-medicine">Most used medicine</option>
+      {% comment %}
+      <option value="revenue-and-profit">Revenue and Profit</option>
+      {% endcomment %}
+    </select>
+    <select name="by" id="by-time">
+      <option value="date">By date</option>
+      <option value="month">By month</option>
+    </select>
+    <input type="date" name="from" required />
+    <input type="date" name="to" required />
+    <input type="submit" />
+  </form>
 
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        },
-        responsive: true,
-        pointRadius: 10,
-        pointHoverRadius: 30,
-      }
-  });
-</script>
+  <canvas id="myChart" width="400" height="200"></canvas>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels : [{% for item in time_data %}"{{ item }}",{% endfor %}],
+            datasets: [{
+              label: "{{ label }}",
+              data : [{% for item in value_data %}{{ item }},{% endfor %}],
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)'
+            }]
+          },
+
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          },
+          responsive: true,
+          pointRadius: 10,
+          pointHoverRadius: 30,
+        }
+    });
+  </script>
+</div>
 <script></script>
 {% endblock %}

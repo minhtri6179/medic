@@ -1,17 +1,25 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
 
-<div class="container">
+{% block content %}
+<div class="container card ml-8 w-100 p-3">
   <!--Simple Form-->
-  <h2 class="my-5">Upload Medicines with csv file</h2>
+  <h2 class="my-5 text-center">Upload Medicines with csv file</h2>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="file" name="upload" accept="csv/*" />
     <br />
     <button class="btn btn-dark my-4" type="submit">Submit</button>
+    <a class="btn btn-dark my-4" href="/patient"
+          >Return to Medicines Page</a
+        >
   </form>
-
+  {% if response.status == False %}
+    <h2 style="color: red">{{response.message}}</h2>
+  {% else %}
+    <h2 style="color: green">{{response.message}}</h2>
+  {% endif %}
   <!--See Image Uploaded-->
-  <h2 class="my-5">File Uploaded Status</h2>
+  <!--h2 class="my-5">File Uploaded Status</h2>
   <div class="row">
     <div class="col-lg-6 col-md-6 col-sm-12 pb-4">
       <div>
@@ -26,6 +34,7 @@
       </div>
     </div>
 
-    {% endblock %}
-  </div>
+    
+  </div-->
 </div>
+{% endblock %}

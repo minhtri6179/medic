@@ -1,198 +1,57 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div>
-    {% if message != None %}
-        <div>{{ message.text }}</div>
-    {% endif %}
-    <!-- <div class="container">
-        {% if perms.medicine.add_medicine %}
-        <a href="" class="btn btn-primary">Create new medicine</a>
-        {% endif %}
-    </div> -->
-
-
-
-
-
-    <div class="container d-flex justify-content-center">
-        <div class="card ml-8 w-100 p-3">
-            <div class="card-header">
-              <h3 class="text-center">MEDICINE HOME PAGE</h3> 
+{% extends "base.html" %} {% block content%} {% load static %}
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="author" content="colorlib.com" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:400,800"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'search-css/main.css' %}" />
+  </head>
+  <body>
+    <div class="s004">
+        <form method="post">
+          {% csrf_token %}
+          <fieldset>
+            <legend>WHICH INVOICE DO YOU WANT TO PAY?</legend>
+            <div class="inner-form">
+              <div class="input-field">
+                <input
+                  type="text"
+                  name="invoice-id-payment"
+                  class="form-control"
+                  id="choices-text-preset-values"
+                  placeholder="Type to search..."
+                />
+                <button class="btn-search" type="submit">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
             </div>
-            <div class="card-body">
-                <div class="container d-flex justify-content-between">
-                    <div>
-                        <a href="{% url 'clinic_management:medicine_create' %}" class="btn btn-primary">Create new medicine</a>
-                        <a href="{% url 'clinic_management:medicine_create' %}" class="btn btn-primary">T</a>
-                        <!--a href="{% url 'clinic_management:medicine_type_index'%}" class="btn btn-info">Medicine type page</a-->
-                    </div>
-                    <form action="{% url 'clinic_management:medicine_index' %}">
-                        <label for="search"></label>
-                        <input type="text" name="q" id="q" size="15" style="border: 0; border-bottom: 1px solid black; outline: 0;" placeholder="search medicine" value="{{request.GET.q}}">
-                        <button type="submit" class="btn btn-black btn-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
-                            </svg>
-                        </button>
-                    </form>
-                </div>
-                
-                <table class="table table-striped">
-                    <thead>
-                        <th>ID</th>
-                        <th>Medicine name</th>
-                        <th>Stock quantity</th>
-                        <th>Sale price</th>
-                        <th>Medicine type</th>
-                        <th>Actions</th>
-                    </thead>
-                    <tbody>
-                        {% for medicine in medicine_list %}
-                            <tr id="medicine{{medicine.id}}">
-                                <td>{{ medicine.id }}</td>
-                                <td><a href="{% url 'clinic_management:medicine_detail' medicine.id %}" style="text-decoration: underline;">{{ medicine.name }}</a></td>
-                                <!-- <td><div onclick="fetchingData('{{ medicine.id}}')">{{ medicine.name }}</div></td> -->
-                                <td>{{ medicine.stock_quantity }}</td>
-                                <td>{{ medicine.sale_price }}</td>
-                                <td>{{ medicine.medicine_type }}</td>
-                                <td>
-                                    <a href="{% url 'clinic_management:medicine_edit' medicine.id %}" 
-                                    class="btn btn-primary btn-link">
-                                        <i class="fa-solid fa-pen-to-square" 
-                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                        data-bs-title="Edit"></i>
-                                    </a>
-                                    <a class="btn btn-link"
-                                    data-bs-toggle="modal" 
-                                    onclick="deleteData('{{ medicine.id }}')">
-                                        <i class="fa-solid fa-trash" 
-                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                        data-bs-title="Delete"></i>
-                                    </a>
-                                    <!-- <div onclick="deleteData('{{ medicine.id }}')">Delete</div> -->
-                                </td>
-                            </tr>
-                            
-                        {% endfor %}
-                    </tbody>
-                    
-                </table>
-                <nav aria-label="Prescription pagination">
-                    <ul class="pagination justify-content-center">
-                        
-                        <li class="page-item {% if not page_obj.has_previous %} disabled {% endif %}">                        
-                            <a class="page-link" 
-                            {% if page_obj.has_previous %}
-                            href=
-                                {% if not request.GET.q %}
-                                "?page={{page_obj.previous_page_number }}"
-                                {% else %}
-                                "?q={{request.GET.q}}&page={{page_obj.previous_page_number }}"
-                                {% endif %}
-                            {% endif %}
-                            >Previous</a>                        
-                        </li>
-                        {% for i in page_obj.paginator.page_range %}
-                            
-                            <li class="page-item {% if i == page_obj.number %} active {% endif %}">
-                                <a class="page-link" href=
-                                    {% if not request.GET.q %}
-                                    "?page={{ i }}"
-                                    {% else %}
-                                    "?q={{request.GET.q}}&page={{i}}"
-                                    {% endif %}
-                                    >
-                                {{ i }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                        <li class="page-item {% if not page_obj.has_next %} disabled {% endif %}">
-                            
-                            <a class="page-link" 
-                            {% if page_obj.has_next %}
-                            href=
-                                {% if not request.GET.q %}
-                                "?page={{page_obj.next_page_number }}"
-                                {% else %}
-                                "?q={{request.GET.q}}&page={{page_obj.next_page_number }}"
-                                {% endif %}
-                            {% endif %}
-                            >Next</a>
-                            
-                        </li>
-                    </ul>
-                </nav>
-
-
-                <div class="modal" id="deleteConfirmation" tabindex="-1">
-                    <div class="modal-dialog">
-                    <form method="post" id="delete-form" class="modal-content">
-                        {% csrf_token %}
-                        <div class="modal-header">
-                        <h5 class="modal-title">Delete confirmation</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                        <p>Are you sure to delete this item?</p>
-                        </div>
-                        <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Confirm</button>
-                        </div>
-                    </form>
-                    </div>
-                </div>
-                
-                <div id="info-space"></div>
-            
-            
-            </div>
-        </div>
-
+          </fieldset>
+        </form>
+      </div>
     </div>
-
-</div>
-
-
-  
-{% endblock %}
-{% block script %}
+    <script src="{% static 'search-js/extention/choices.js' %}"></script>
     <script>
-        const fetchingData = id =>{
-            fetch(id)
-            .then(res =>{
-                if (res.status == 200) 
-                    return res.text()
-                throw new Error('Not found', {cause: response})
-            } )
-            .then(data=>{
-                medicineDiv = document.getElementById('medicine'+id)
-                medicineDiv.insertAdjacentHTML("afterend", data);
-
-                // info = document.getElementById('info-space')
-                // info.innerHTML = data
-            })
-            .catch(err =>
-            console.log(err))
-            
-        }
-        const deleteData = id => {
-            const deleteConfirmation = document.getElementById("deleteConfirmation")
-            var myModal = new bootstrap.Modal(deleteConfirmation)
-            myModal.toggle()
-
-            var deleteForm = document.getElementById('delete-form')
-            deleteForm.action = "{% url 'clinic_management:medicine_delete' 0%}".replace('0', id)
-
-            // fetch('delete/' + id)
-            // .then(res => {
-            //     if (res.status == 200)
-            //         medicineDiv = document.getElementById('medicine'+id)
-            //         medicineDiv.innerHTML = ""
-            //         info = document.getElementById('info-space')
-            //         info.innerHTML = "Delete successfully"
-            // })
-        }
+      var textPresetVal = new Choices("#choices-text-preset-values", {
+        removeItemButton: true,
+      });
     </script>
+  </body>
+  <!-- This templates was made by Colorlib (https://colorlib.com) -->
+</html>
+
 {% endblock %}

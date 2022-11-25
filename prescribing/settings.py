@@ -40,11 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'xhtml2pdf',
-    # 'patient',
-    # 'medicine',
-    # 'account',
-    # 'prescription',
-    # 'invoice',
+    'rest_framework',
     'account',
     'report',
     'api',
@@ -91,8 +87,13 @@ WSGI_APPLICATION = 'prescribing.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'IajMpjsfENviyYcQ2FAH',
+        'HOST': 'containers-us-west-26.railway.app',
+        'PORT': '5906',
     }
 }
 

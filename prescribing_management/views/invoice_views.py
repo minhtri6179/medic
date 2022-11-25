@@ -177,7 +177,6 @@ class InvoicePrintView(RoleRequiredMixin, View):
         # pdf = pisa.pisaDocument(io.BytesIO(html.encode("UTF-16")), result)
         pdf = pisa.pisaDocument(io.BytesIO(
             html.encode("utf-8")), result, encoding='utf-8')
-        print(pdf)
         if not pdf.err:
             return HttpResponse(result.getvalue(), content_type='application/pdf; encoding="utf-8"')
         return None

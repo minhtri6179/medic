@@ -155,6 +155,7 @@ class Invoice(SoftDeleteAbstractModel):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     total = models.FloatField(default=0)
+    is_paid = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return 'invoice - ' + str(self.id)
@@ -181,7 +182,6 @@ class InvoiceDetail(SoftDeleteAbstractModel):
     quantity = models.IntegerField(default=0)
     unit_price = models.FloatField(default=0)
     line_total = models.FloatField(default=0)
-    is_paid = models.BooleanField(default=False)
 
     @property
     def get_line_total(self):

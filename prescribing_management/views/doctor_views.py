@@ -37,7 +37,7 @@ class DoctorEditView(LoginRequiredView, UpdateView):
 
 class DoctorListView(ListView):
     model = Doctor
-    template_name = 'Doctor/index.html'
+    template_name = 'doctor/index.html'
     context_object_name: Optional[str] = 'doctors'
     paginate_by: int = 10
 

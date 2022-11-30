@@ -156,6 +156,7 @@ class Invoice(SoftDeleteAbstractModel):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     total = models.FloatField(default=0)
     is_paid = models.BooleanField(default=False)
+    stripe_invoice_id = models.CharField(max_length=100, default="")
 
     def __str__(self) -> str:
         return 'invoice - ' + str(self.id)
@@ -197,24 +198,3 @@ class InvoiceDetail(SoftDeleteAbstractModel):
 
     class Meta:
         unique_together = (('invoice', 'medicine'),)
-
-
-class CardDetail(SoftDeleteAbstractModel):
-    class CardType(models.TextChoices):
-        MasterCard = 'MasterCard'
-        Visa = 'Visa'
-    card_number = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=50)
-    card_type = models.CharField(max_length=10,
-                                 choices=CardType.choices,
-                                 default=CardType.MasterCard)
-    ccv = models.CharField(validators=[MinLengthValidator(3)], max_length=3)
-
-
-class Payment(SoftDeleteAbstractModel):
-    card_num = models.IntegerField(primary_key=True, default='30213124921')
-    created_at = models.DateTimeField(auto_now_add=True)
-    payment_amount = models.FloatField()
-    invoice = models.ForeignKey(
-        InvoiceDetail, on_delete=models.CASCADE, default='-1')
-    card = models.ForeignKey(CardDetail, on_delete=models.CASCADE)

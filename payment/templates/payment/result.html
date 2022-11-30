@@ -1,0 +1,74 @@
+{% extends "base.html"%} {% block content %} {% load static %}
+
+<div class="row justify-content-center mx-auto w-auto">
+  {% if status == "success" %}
+  <table class="table text-center mx-auto w-auto">
+    <thead>
+      <tr>
+        <th>Item ID</th>
+        <th>Total Price</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{id}}</td>
+        <td>{{total}}</td>
+        {% if is_paid == True %}
+        <td>Paid</td>
+        {% else %}
+        <td>
+          <a
+            class="btn btn-link"
+            data-bs-toggle="modal"
+            onclick="pay('{{ id }}')"
+            >Unpaid</a
+          >
+        </td>
+        {% endif %}
+      </tr>
+    </tbody>
+  </table>
+  {% else %}
+  <h1>Invoice Not Found</h1>
+  {% endif %}
+</div>
+
+<div class="modal" id="payConfirmation" tabindex="-1">
+  <div class="modal-dialog">
+    <form method="post" id="pay-form" class="modal-content">
+      {% csrf_token %}
+      <div class="modal-header">
+        <h5 class="modal-title">Delete confirmation</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure to delete this item?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary">Confirm</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  console.log("vao day r");
+  const pay = (id) => {
+    const deleteConfirmation = document.getElementById("payConfirmation");
+    var myModal = new bootstrap.Modal(deleteConfirmation);
+    myModal.toggle();
+
+    var deleteForm = document.getElementById("pay-form");
+    deleteForm.action = "{% url 'payment:landing' %}";
+  };
+</script>
+{% endblock %}

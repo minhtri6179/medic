@@ -58,14 +58,18 @@
                             <td>{{pre.appointment_date}}</td>
                             <td>{{pre.appointment_time}}</td>
                             <td class="td-actions text-right">
-                                <a href="{% url 'prescribing_management:notification_done' pre.id %}">
-                                <button type="button" rel="tooltip" class="btn btn-info btn-sm btn-icon">
-                                    <i class="tim-icons icon-refresh-02"></i>
-                                </button></a>
-                                <a onclick="deleteData('{{ pre.id }}')">
-                                <button type="button" rel="tooltip" class="btn btn-danger btn-sm btn-icon">
-                                    <i class="tim-icons icon-simple-remove"></i>
-                                </button></a>
+                                {% if pre.status != 'done' %}
+                                    <a href="{% url 'prescribing_management:notification_done' pre.id %}">
+                                    <button type="button" rel="tooltip" class="btn btn-info btn-sm btn-icon">
+                                        <i class="tim-icons icon-refresh-02"></i>
+                                    </button></a>
+                                {% endif %}
+                                {% if pre.status == 'waiting' %}
+                                    <a onclick="deleteData('{{ pre.id }}')">
+                                    <button type="button" rel="tooltip" class="btn btn-danger btn-sm btn-icon">
+                                        <i class="tim-icons icon-simple-remove"></i>
+                                    </button></a>
+                                {% endif %}
                             </td>
                         </tr>
                         

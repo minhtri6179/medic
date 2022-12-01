@@ -214,11 +214,13 @@
       >
         DELETE</a
       >
-      <a
-        href="{% url 'prescribing_management:prescription_create' %}?patient={{patient.id}}"
-        class="btn btn-info btn-sm"
-        >CREATE NEW PRESCRIPTION</a
-      >
+      {%if request.user.role != 'assistance'%}
+        <a
+          href="{% url 'prescribing_management:prescription_create' %}?patient={{patient.id}}"
+          class="btn btn-info btn-sm"
+          >CREATE NEW PRESCRIPTION</a
+        >
+      {% endif %}
       <button class="btn btn-info btn-sm">CREATE NEW INVOICE</button>
     </div>
   </div>

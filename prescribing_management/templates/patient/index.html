@@ -18,7 +18,7 @@
                     {% if request.user.role == 'assistance' %}
                     <a href="{% url 'prescribing_management:patient_create' %}" class="btn btn-primary">Create new patient</a>
                     <a href="{% url 'prescribing_management:patient_upload' %}" class="btn btn-success">Import patients</a>
-                    <a href="{% url 'prescribing_management:patient_export' %}" class="btn btn-primary">Download Excel Patient</a>
+                    <a href="{% url 'prescribing_management:patient_export' %}" class="btn btn-info">Download Excel Patient</a>
                     {% endif %}  
                       
                     <form action="{% url 'prescribing_management:patient_index' %}">
@@ -50,7 +50,9 @@
                                     <div class="collapse" id="patient-{{ patient.id }}">
                                         <p>Gender: {{ patient.gender }}</p>
                                         <p>Temperature: {{ patient.temperature }}</p>
-                                        <a href="{% url 'prescribing_management:prescription_create'%}?patient={{patient.id}}" class="btn btn-primary btn-sm">Create prescription</a>
+                                        {%if user.role != 'assistance'%}
+                                            <a href="{% url 'prescribing_management:prescription_create'%}?patient={{patient.id}}" class="btn btn-primary btn-sm">Create prescription</a>
+                                        {% endif %}
                                         <a href="{% url 'prescribing_management:invoice_create'%}?patient={{patient.id}}" class="btn btn-primary  btn-sm">Create invoice</a>
                                     </div>
                                 </td >

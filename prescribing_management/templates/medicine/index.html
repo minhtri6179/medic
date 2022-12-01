@@ -23,10 +23,10 @@
             <div class="card-body">
                 <div class="container d-flex justify-content-between">
                     <div>
-                        <a href="{% url 'prescribing_management:medicine_create' %}" class="btn btn-primary">Create new medicine</a>
                         <a href="{% url 'prescribing_management:medicine_type_index' %}" class="btn btn-info">Medicine type page</a>
+                        <a href="{% url 'prescribing_management:medicine_create' %}" class="btn btn-primary">Create new medicine</a>
                         {% if request.user.role == 'assistance' %}
-                        <a href="{% url 'prescribing_management:medicine_upload' %}" class="btn btn-success">Upload Medicine</a>
+                            <a href="{% url 'prescribing_management:medicine_upload' %}" class="btn btn-success">Upload Medicine</a>
                         {% endif %}
                     </div>
                     

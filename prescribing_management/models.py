@@ -3,7 +3,7 @@ from django.db import models
 import datetime
 from base.models import SoftDeleteAbstractModel
 from account.models import User
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, MaxValueValidator, MinValueValidator
 from django.utils.timezone import now
 
 
@@ -86,7 +86,8 @@ class Schedule(SoftDeleteAbstractModel):
     appointment_time = models.TimeField(default=None)
     status = models.CharField(max_length=10,
                               choices=Status.choices,
-                              default=Status.waiting)
+                              default=Status.pending
+                              )
     note_to_doctor = models.TextField(blank=True, null=True, default=None)
 
     def __str__(self) -> str:
@@ -109,7 +110,12 @@ class Medicine(SoftDeleteAbstractModel):
     usage = models.CharField(max_length=100, blank=True)
     origin_price = models.FloatField()
     sale_price = models.FloatField()
-    dose_per_day = models.FloatField()
+    dose_per_day = models.FloatField(
+        default=1,
+        validators=[
+            MaxValueValidator(4.0), MinValueValidator(0.0)
+        ]
+    )
     medicine_type = models.ForeignKey(MedicineType, on_delete=models.CASCADE)
 
     def __str__(self) -> str:

@@ -86,7 +86,7 @@ class Schedule(SoftDeleteAbstractModel):
     appointment_time = models.TimeField(default=None)
     status = models.CharField(max_length=10,
                               choices=Status.choices,
-                              default=Status.pending
+                              default=Status.waiting
                               )
     note_to_doctor = models.TextField(blank=True, null=True, default=None)
 

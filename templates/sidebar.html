@@ -62,7 +62,7 @@
       </a>
     </li>
 
-    {% comment %} {% url 'payment:payment_index' as payment_url%}
+    {% url 'payment:payment_index' as payment_url%}
 
     <li class="{% if request.path == payment_url %}active{% endif %}">
       <a href="{% url 'payment:payment_index' %}">
@@ -70,7 +70,7 @@
         <h5>PAYMENT</h5>
       </a>
     </li>
-    {% endcomment %} {% url 'report:revenue' as report_url %}
+    {% url 'report:revenue' as report_url %}
 
     <li class="{% if report_url in request.path %}active{% endif %}">
       <a href="{% url 'report:revenue' %}">

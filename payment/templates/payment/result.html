@@ -18,12 +18,18 @@
         <td>Paid</td>
         {% else %}
         <td>
-          <a
-            class="btn btn-link"
-            data-bs-toggle="modal"
-            onclick="pay('{{ id }}')"
-            >Unpaid</a
-          >
+          <form action="{% url 'payment:charge' id %}" method="post">
+            {% csrf_token %}
+            <script
+              src="https://checkout.stripe.com/checkout.js"
+              class="stripe-button"
+              data-key="{{key}}"
+              data-description="Payment Gateway"
+              data-amount="1840000)"
+              data-currency="vnd"
+              data-locale="auto"
+            ></script>
+          </form>
         </td>
         {% endif %}
       </tr>

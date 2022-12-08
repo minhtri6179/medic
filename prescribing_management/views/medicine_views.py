@@ -177,6 +177,17 @@ def upload(request):
                     break
                 m_type = MedicineType.objects.filter(
                     name=row[7]).values_list('id', flat=True)
+                m_name = Medicine.objects.filter(
+                    name=row[0]).values_list('id', flat=True)
+                if len(m_type) != 0 and len(m_name) != 0:
+                    medicine_quantity = Medicine.objects.filter(
+                        name=row[0], medicine_type=MedicineType(id=m_type[0]))
+
+                    quantity_updated = medicine_quantity[0].stock_quantity+int(
+                        row[1])
+                    medicine_quantity.update(stock_quantity=quantity_updated)
+                    continue
+
                 if len(m_type) == 0:
                     medicine_type = MedicineType(name=row[7])
                     medicine_type.save()

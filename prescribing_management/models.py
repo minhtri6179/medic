@@ -59,7 +59,7 @@ class Patient(SoftDeleteAbstractModel):
     height = models.FloatField(blank=True, null=True)
     weight = models.FloatField(blank=True, null=True)
     temperature = models.FloatField(default=37, blank=True, null=True)
-    blood_pressure = models.FloatField(blank=True, null=True)
+    bood_pressure = models.FloatField(blank=True, null=True)
     heart_rate = models.FloatField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE,
@@ -88,6 +88,8 @@ class Schedule(SoftDeleteAbstractModel):
                               choices=Status.choices,
                               default=Status.waiting)
     note_to_doctor = models.TextField(blank=True, null=True, default=None)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE,
+                               blank=True, null=True)
 
     def __str__(self) -> str:
         return self.patient_name
@@ -129,7 +131,7 @@ class Prescription(SoftDeleteAbstractModel):
     cur_height = models.FloatField(blank=True, null=True)
     cur_wight = models.FloatField(blank=True, null=True)
     cur_temperature = models.FloatField(blank=True, null=True)
-    cur_bood_pressure = models.FloatField(blank=True, null=True)
+    cur_blood_pressure = models.FloatField(blank=True, null=True)
     cur_heart_rate = models.FloatField(blank=True, null=True)
 
     def __str__(self) -> str:

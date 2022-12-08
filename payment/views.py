@@ -1,7 +1,7 @@
 # Create your views here.
 from rest_framework import serializers
 from datetime import datetime
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import TemplateView
 from django.conf import settings
@@ -19,8 +19,10 @@ import stripe
 from prescribing_management.models import Invoice
 from prescribing_management.forms.medicine_forms import MedicineCreateForm, MedicineTypeForm
 from base.views import LoginRequiredView
+from django.conf import settings
 
-stripe.api_key = "sk_test_51M7WJ2He0kxdqOahEAfTBDUrGrKCdY8lzo6xAiXiTF0gFAXvCeaiBAyjxcpjJRlCrmIbqTrWhIeiQnd6kFpKcPGQ00H7Pq5gxf"
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class PaymentSelectionView(View):
@@ -42,16 +44,39 @@ class PaymentSelectionView(View):
                     id=invoice).values()[0]['id']
                 res['patient_id'] = invoice_model.objects.filter(
                     id=invoice).values()[0]['patient_id']
-                res['total'] = invoice_model.objects.filter(
-                    id=invoice).values()[0]['total']
+                res['total'] = int(invoice_model.objects.filter(
+                    id=invoice).values()[0]['total'])
                 res['is_paid'] = invoice_model.objects.filter(
                     id=invoice).values()[0]['is_paid']
             except:
                 res['status'] = "fail"
                 print("Invoice not found")
             break
-        print(res)
+        res['key'] = settings.STRIPE_PUBLISHABLE_KEY
         return render(request, 'payment/result.html', context=res)
+
+
+def charge(request, id):
+    invoice_instance = get_object_or_404(Invoice, pk=id)
+    if request.method == 'POST':
+        try:
+            charge = stripe.Charge.create(
+                amount=int(invoice_instance.total),
+                currency='vnd',
+                description='Payment Gateway',
+                source=request.POST.get('stripeToken')
+            )
+            invoice_instance.is_paid = True
+            invoice_instance.save()
+            return render(request, 'payment/charge.html')
+        except stripe.error.CardError as e:
+            print('Status is: %s' % e.http_status)
+            print('Code is: %s' % e.code)
+            # param is '' in this case
+            print('Param is: %s' % e.param)
+            print('Message is: %s' % e.user_message)
+
+            return render(request, 'payment/cancel.html')
 
 
 class PaymentPageView(View):

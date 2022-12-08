@@ -63,14 +63,8 @@
         fetch("{% url 'api:medicine_list' %}")
         .then(res => res.json())
         .then(data => {
-            console.log(`data: ${data}`)
             content = document.getElementById('medicine-select')
-            
-
-            
             result = data.map(val => `<option value='${val.id}'>Medicine name: ${val.medicineName} </option>`).join('')
-            console.log(`result: ${result}}`)
-            console.log(result==null)
             content.innerHTML = result
         })
         .catch(err => console.log(err))
@@ -83,14 +77,12 @@
         fetch(`{% url 'api:medicine_list'%}?keyword=${keyword}`)
         .then(res => res.json())
         .then(data => {
-            console.log(`data: ${data}`)
             content = document.getElementById('medicine-select')
             
 
             
             result = data.map(val => `<option value='${val.id}'>Medicine name: ${val.medicineName} </option>`).join('')
-            console.log(`result: ${result}}`)
-            console.log(result==null)
+           
             content.innerHTML = result
         })
         .catch(err => console.log(err))
@@ -160,15 +152,13 @@
     const chooseMedicine =async () => {
         var selectedItem = [...document.querySelectorAll("#medicine-select option:checked")].map(element => element.value)
         
-        console.log(selectedItem)
         prescriptionDiv = document.getElementById('prescription-detail-list')
         medicineList = await Promise.all(selectedItem.map(async element => {
             const response = await fetch("{% url 'api:medicine_detail' 0 %}".replace('0', element))
-            console.log(response)
             const data = await response.json()
-            console.log(data)
             return data
         }))
+        
         prescriptionMedicineList = [...document.querySelectorAll('input[name="medicine-ids"]')].map(element => element.value)
         if (prescriptionMedicineList.length == 0){
             medicineList.forEach(element => {

@@ -30,6 +30,10 @@ DEBUG = True
 ALLOWED_HOSTS = ['medic-production.up.railway.app', '127.0.0.1']
 CSRF_TRUSTED_ORIGINS = ['https://medic-production.up.railway.app']
 
+# Stripe API
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51M7WJ2He0kxdqOah6kg1uYxOMJ60mzc6THbRVpx69IoOPzQOWV78ND2GZvR8YJpVxOD6As5kRDCMhdL21mpvfZfO00cg9Zd1QG'
+STRIPE_SECRET_KEY = 'sk_test_51M7WJ2He0kxdqOahEAfTBDUrGrKCdY8lzo6xAiXiTF0gFAXvCeaiBAyjxcpjJRlCrmIbqTrWhIeiQnd6kFpKcPGQ00H7Pq5gxf'
+
 # Application definition
 MEDIA_URL = '/media/'
 
@@ -93,9 +97,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'railway',
         'USER': 'postgres',
-        'PASSWORD': 'IajMpjsfENviyYcQ2FAH',
-        'HOST': 'containers-us-west-26.railway.app',
-        'PORT': '5906',
+        'PASSWORD': 'rCaS6C02ooyZoyrNyVtK',
+        'HOST': 'containers-us-west-105.railway.app',
+        'PORT': '7414',
     }
 }
 

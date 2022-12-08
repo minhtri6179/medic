@@ -10,7 +10,8 @@ class InvoiceCreateOrEditForm(ModelForm):
     class Meta:
         model = Invoice
         exclude = ('created_at', 'modified_at', 'total',
-                   'medicines', 'deleted_at', 'created_by')
+                   'medicines', 'deleted_at', 'created_by',
+                   'is_paid', 'stripe_invoice_id')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

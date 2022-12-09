@@ -50,7 +50,7 @@
                                     <div class="collapse" id="patient-{{ patient.id }}">
                                         <p>Gender: {{ patient.gender }}</p>
                                         <p>Temperature: {{ patient.temperature }}</p>
-                                        {%if user.role != 'assistance'%}
+                                        {%if user.role != 'assistance' and user.role != 'base' and user.role != 'admin'%}
                                             <a href="{% url 'prescribing_management:prescription_create'%}?patient={{patient.id}}" class="btn btn-primary btn-sm">Create prescription</a>
                                         {% endif %}
                                         <a href="{% url 'prescribing_management:invoice_create'%}?patient={{patient.id}}" class="btn btn-primary  btn-sm">Create invoice</a>

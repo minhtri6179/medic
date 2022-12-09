@@ -1,15 +1,16 @@
-# base image  
-FROM --platform=linux/amd64 python:3.10   
+# pull official base image
+FROM --platform=linux/amd64 python:3.10
 
-WORKDIR /app
-# set environment variables  
+# set work directory
+WORKDIR /usr/src/app
 
-COPY requirements.txt ./
-# run this command to install all dependencies  
-RUN pip install -r requirements.txt  
 
-# copy whole project to your docker home directory. 
-COPY . .  
+# install dependencies
+COPY ./requirements.txt .
+RUN pip install -r requirements.txt
 
-# start server  
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]  
+
+# copy project
+COPY . .
+
+
